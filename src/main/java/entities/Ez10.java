@@ -3,17 +3,17 @@ import interfaces.VehicleInterface;
 
 public class Ez10 implements VehicleInterface{
 
-	public int ezId;
-	public long batteryLevel;
-	public long range;
-	public int maxSpeed;
-	public long turnAngle;
-	public int width; // CM
-	public int length; // cm
-	public int maxPassengers;
-	public int currentPassengers;
-	public String operatingFuel;
-	public String operatingType;
+	private int ezId;
+	private long batteryLevel;
+	private long range;
+	private int maxSpeed;
+	private long turnAngle;
+	private int width; // CM
+	private int length; // cm
+	private int maxPassengers;
+	private int currentPassengers;
+	private String operatingFuel;
+	private String operatingType;
 
 	public Ez10(int ezId) {
 		this.ezId = ezId;
@@ -130,6 +130,24 @@ public class Ez10 implements VehicleInterface{
 
 	public void setOperatingType(String operatingType) {
 		this.operatingType = operatingType;
+	}
+
+	@Override
+	public void moveTo(String location) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fuelUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pickPassenger(int passengersAmount) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

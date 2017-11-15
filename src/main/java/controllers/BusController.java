@@ -18,7 +18,9 @@ public class BusController{
 		get("/buses/:id", (req, res) -> busService.getBus(Integer.valueOf(req.params("id"))),
 				JsonUtils.json());
 	
-		/*  This block can be used to access parameters not visible in the url (bound to request) - needs different endpoint "/buses" is taken
+		/*  
+		 * This block can be used to access parameters not visible in the url (bound to request) - needs different endpoint "/buses" is taken
+		 * 
 		get("/buses", (req, res) -> {return busService.getBus(Integer.valueOf(req.queryParams("id")));
 		}, JsonUtils.json());  */
 		

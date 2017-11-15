@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
 
     	port(getHerokuAssignedPort());
+    	
     	//This block is for testing purposes, creates 4 "test buses"
     	BusService testService = new BusService();
     	new BusController(testService);
@@ -20,7 +21,7 @@ public class Main {
     	
     
     	
-    	//new BusController(new BusService());  //comment the controller above and uncomment this  to use only the REST API depicted in BusService.java
+    	//new BusController(new BusService());  //comment the controller block above and uncomment this  to use only the REST API depicted in BusService.java
     }
     static int getHerokuAssignedPort() {
         ProcessBuilder processBuilder = new ProcessBuilder();
