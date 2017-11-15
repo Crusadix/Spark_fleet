@@ -7,6 +7,7 @@ import services.BusService;
 public class Main {
     public static void main(String[] args) {
 
+    	port(getHerokuAssignedPort());
     	//This block is for testing purposes, creates 4 "test buses"
     	BusService testService = new BusService();
     	new BusController(testService);
