@@ -75,7 +75,7 @@
                     <appName>sohjoa-sim-fleet-manager</appName>
                     <processTypes>
                         <!-- Tell Heroku how to launch your application -->
-                        <web>java -jar ./target/sohjoa-sim-fleet-manager-0.0.1-SNAPSHOT-jar-with-dependencies.jar</web>
+                        <web>java -jar ./target/Spark_fleet-0.0.1-SNAPSHOT-jar-with-dependencies.jar</web>
                     </processTypes>
                 </configuration>
             </plugin>
