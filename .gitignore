@@ -13,7 +13,6 @@ tomcat
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -21,9 +20,6 @@ tomcat
 *.ear
 *.sar
 *.class
-
-# Maven 
-target/
 
 # IntelliJ project files 
 *.iml
