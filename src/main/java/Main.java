@@ -21,4 +21,11 @@ public class Main {
     	
     	//new BusController(new BusService());  //comment the controller above and uncomment this  to use only the REST API depicted in BusService.java
     }
+    static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
 }
