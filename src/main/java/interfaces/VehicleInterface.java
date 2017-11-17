@@ -1,20 +1,26 @@
 package interfaces;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
+	
 
-	public void moveTo(String location);
+	public String moveTo() throws InterruptedException;
 
 	public void fuelUp();
 
-	public void pickPassenger(int passengersAmount);
+	public void pickPassenger(PassengerInterface passengerInterface);
 
 	public void setRoute(DirectionsRoute route);
 
 	public ArrayList<DirectionsStep> getRoute();
+
+	public int getMaxPassengers();
+
+	public List<PassengerInterface> getPassengersOnBoard();
 
 }

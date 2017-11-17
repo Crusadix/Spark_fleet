@@ -17,37 +17,15 @@ import com.google.maps.model.TravelMode;
 
 import controllers.BusController;
 import controllers.BusStopController;
+import controllers.PassengerController;
 import services.BusService;
 import services.BusStopService;
+import services.PassengerService;
 
 public class Main {
-	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ApiException, InterruptedException, IOException {
 
-	/*	
-		GeoApiContext context = new GeoApiContext.Builder()
-			    .apiKey("AIzaSyCnKfFi02VENIr0EXMND16fdBYSjxfncHA")
-			    .build();
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-			//GeocodingResult[] results = GeocodingApi.geocode(context,"Siltakuja 2, espoo").await();
-			//System.out.println(gson.toJson(results[0].addressComponents));
-	
-			DirectionsResult results = null;
-			try {
-				results = DirectionsApi.getDirections(context, "Siltakuja 2, Espoo", "Sello, Espoo").await();
-			} catch (ApiException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-				
-				System.out.println(gson.toJson(results));  */
-				
 		port(getHerokuAssignedPort());
 
 		// This block is for testing purposes
@@ -61,9 +39,26 @@ public class Main {
 		new BusStopController(stopTestService);
 		stopTestService.createStation(1, "Electric", "Warehouse", "Sello, Espoo");
 		stopTestService.createBusStop(2, "Siltakuja, Espoo");
+		
+		PassengerService passengerService = new PassengerService();
+		new PassengerController(passengerService);
+		
+		passengerService.createPassenger(1, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
+		passengerService.createPassenger(2, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
+		
+		stopTestService.getStop(2).addPassenger(passengerService.getPassengers(1));
+		stopTestService.getStop(2).addPassenger(passengerService.getPassengers(2));
+		stopTestService.getStop(2).pickUpPassengers(busTestService.getBus(1));
+		
+		//System.out.println(busTestService.setBusRoute(2, "Siltakuja 2, Espoo", "Kauniainen, Espoo"));
+		//System.out.println(busTestService.driveCurrentRoute(2));
 
-		// new BusController(new BusService()); //comment the controller block above and
-		// uncomment this to use only the REST API depicted in BusService.java
+		/*
+		 * Comment the controller block above and uncomment this to use only the REST API
+		 * 
+		 * new BusStopController(new BusStopService()); new BusController(new
+		 * BusService());
+		 */
 	}
 
 	static int getHerokuAssignedPort() {

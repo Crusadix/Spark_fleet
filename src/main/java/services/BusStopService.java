@@ -18,7 +18,6 @@ public class BusStopService {
 	}
 
 	public BusStopInterface getStop(int id) {
-
 		return stops.get(id);
 	}
 

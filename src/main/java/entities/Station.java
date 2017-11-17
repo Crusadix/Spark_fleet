@@ -1,6 +1,10 @@
 package entities;
 
+import java.util.List;
+
 import interfaces.BusStopInterface;
+import interfaces.PassengerInterface;
+import interfaces.VehicleInterface;
 
 public class Station implements BusStopInterface {
 
@@ -8,14 +12,12 @@ public class Station implements BusStopInterface {
 	private int id;
 	private String fuelingUpType;
 	private String storageType;
-	private int passengers;
 	private String location;
 
 	public Station(int id, String fuelingUpType, String storageType, String location) {
 		this.setId(id);
 		this.fuelingUpType = fuelingUpType;
 		this.storageType = storageType;
-		this.passengers = 0;
 		this.location = location;
 	}
 
@@ -28,8 +30,16 @@ public class Station implements BusStopInterface {
 	}
 
 	@Override
-	public void pickUpPassengers(int amount) {
+	public void addPassenger(PassengerInterface passenger) {
 		// TODO Auto-generated method stub
-
+		
 	}
+
+	@Override
+	public void pickUpPassengers(VehicleInterface vehicle) {
+		
+		// TODO Auto-generated method stub
+		
+	}
+
 }
