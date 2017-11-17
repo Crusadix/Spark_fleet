@@ -1,22 +1,36 @@
 package entities;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.DirectionsStep;
+
 import interfaces.VehicleInterface;
 
-public class Ez10 implements VehicleInterface{
+public class Ez10 implements VehicleInterface {
 
-	private int ezId;
+	private String name = "EasyMile EZ10";
+	private int id;
 	private long batteryLevel;
 	private long range;
-	private int maxSpeed;
+	private int maxSpeed = 20; // KM/h
 	private long turnAngle;
 	private int width; // CM
-	private int length; // cm
-	private int maxPassengers;
+	private int length; // CM
+	private int maxPassengers = 12;
 	private int currentPassengers;
-	private String operatingFuel;
+	private String operatingFuel = "Electric";
 	private String operatingType;
+	public Map<Integer, DirectionsStep> currentRoute = new HashMap<>();
+	
+	
 
 	public Ez10(int ezId) {
-		this.ezId = ezId;
+		this.id = ezId;
 		this.batteryLevel = 100;
 		this.range = 0;
 		this.maxSpeed = 20;
@@ -29,26 +43,12 @@ public class Ez10 implements VehicleInterface{
 		this.operatingType = "onDemand";
 	}
 
-	public Ez10(long batteryLevel, long range, int maxSpeed, long turnAngle, int width, int length, int maxPassengers,
-			int currentPassengers, String operatingFuel, String operatingType) {
-		this.batteryLevel = batteryLevel;
-		this.range = range;
-		this.maxSpeed = maxSpeed;
-		this.turnAngle = turnAngle;
-		this.width = width;
-		this.length = length;
-		this.maxPassengers = maxPassengers;
-		this.currentPassengers = currentPassengers;
-		this.operatingFuel = operatingFuel;
-		this.operatingType = operatingType;
-	}
-	
 	public int getBusId() {
-		return ezId;
+		return id;
 	}
-	
+
 	public void setBusId(int ezId) {
-		this.ezId = ezId;
+		this.id = ezId;
 	}
 
 	public long getBatteryLevel() {
@@ -135,20 +135,32 @@ public class Ez10 implements VehicleInterface{
 	@Override
 	public void moveTo(String location) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void fuelUp() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pickPassenger(int passengersAmount) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setRoute(DirectionsRoute route) {
 		
+		for (int i = 0; i < route.legs[0].steps.length; i++) {
+		    DirectionsStep step = route.legs[0].steps[i];
+		    currentRoute.put(i,step);
+		}
+	}
+	
+	public ArrayList<DirectionsStep> getRoute() {
+		return new ArrayList<>(currentRoute.values());
 	}
 
 }
-
