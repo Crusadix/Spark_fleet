@@ -7,15 +7,13 @@ import utilities.JsonUtils;
 
 public class PassengerController {
 
-	public PassengerController(final PassengerService passengerServie) {
+	public PassengerController(final PassengerService passengerService) {
 
-		get("/passengers", (req, res) -> passengerServie.getAllPassengers(), JsonUtils.json());
+		get("/passengers", (req, res) -> passengerService.getAllPassengers(), JsonUtils.json());
 
 		put("/passengers", (req, res) -> {
 
-			return passengerServie.createPassenger(
-					Integer.valueOf(req.queryParams("id")), 
-					req.queryParams("origin"),
+			return passengerService.createPassenger(Integer.valueOf(req.queryParams("id")), req.queryParams("origin"),
 					req.queryParams("destination"));
 
 		}, JsonUtils.json());

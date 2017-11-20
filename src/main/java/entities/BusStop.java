@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Stack;
 import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
-import interfaces.VehicleInterface;
 
 public class BusStop implements BusStopInterface {
 
 	private String name = "Bus stop";
 	private int id;
 	private String location;
+	private String locationCoords; 
 	private Stack<PassengerInterface> currentPassengers = new Stack<>();
 
-	public BusStop(int id, String location) {
+	public BusStop(int id, String location, String locationCoords) {
 		this.id = id;
 		this.location = location;
+		this.locationCoords = locationCoords;
 	}
 
 	public void addPassenger(PassengerInterface passenger) {
@@ -27,13 +28,17 @@ public class BusStop implements BusStopInterface {
 	}
 
 	@Override
-	public void pickUpPassengers(VehicleInterface vehicle) {
+	public Stack<PassengerInterface> getPassengersWaiting() {
+		return currentPassengers;
+	}
 
-		for (int i = 0; i < currentPassengers.size(); i++) {
-			System.out.println("Stop derp");
-			if (vehicle.getPassengersOnBoard().size() < vehicle.getMaxPassengers()) {
-				vehicle.pickPassenger(currentPassengers.pop());
-			}
-		}
+	@Override
+	public PassengerInterface pickUpPassenger() {
+		return currentPassengers.pop();
+	}
+
+	@Override
+	public String getLocationCoords() {
+		return locationCoords;
 	}
 }

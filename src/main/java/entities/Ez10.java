@@ -11,6 +11,7 @@ import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.LatLng;
 
+import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
 import interfaces.VehicleInterface;
 
@@ -36,7 +37,7 @@ public class Ez10 implements VehicleInterface {
 		this.id = ezId;
 		this.batteryLevel = 100;
 		this.range = 0;
-		this.maxSpeed = 120;
+		this.maxSpeed = 1200;
 		this.maxSpeedMeters = this.maxSpeed / 3.6;
 		this.turnAngle = 35;
 		this.width = 200; // CM
@@ -49,8 +50,6 @@ public class Ez10 implements VehicleInterface {
 	public int getBusId() {
 		return id;
 	}
-
-
 
 	public long getBatteryLevel() {
 		return batteryLevel;
@@ -70,7 +69,6 @@ public class Ez10 implements VehicleInterface {
 		this.maxSpeedMeters = maxSpeed / 3.6;
 	}
 
-
 	public int getMaxPassengers() {
 		return maxPassengers;
 	}
@@ -83,21 +81,31 @@ public class Ez10 implements VehicleInterface {
 		return passengersOnBoard;
 	}
 
-
 	@Override
 	public String moveTo() throws InterruptedException {
+		
+		ArrayList<String> derp = new ArrayList<String>(); //testing purposes
 
 		for (int i = 0; i < currentRoute.size(); i++) {
 			DirectionsStep nextStep = currentRoute.get(i);
-			double timeToMove = nextStep.distance.inMeters / maxSpeedMeters;  //seconds required for moving to next step
+			double timeToMove = nextStep.distance.inMeters / maxSpeedMeters; // seconds required for moving to next step
+			//System.out.println(nextStep.startLocation.toString());
+			derp.add(nextStep.startLocation.toString());	//testing purposes
 			System.out.println("Currently at: " + nextStep.startLocation.toString() + ", moving to "
 					+ nextStep.endLocation.toString() + ", moving will take " + timeToMove + "seconds. Current time: "
-					+ String.valueOf(System.currentTimeMillis()));
-			Thread.sleep((long) timeToMove*1000);
+					+ String.valueOf(System.currentTimeMillis())); 
+			
+			Thread.sleep((long) timeToMove * 1000);
 			this.location = nextStep.endLocation;
-			System.out.println("Arrived at " + this.location.toString() + ".");
+			//System.out.println("Arrived at " + this.location.toString() + ". Waiting 10 seconds for passengers.");
+			//Thread.sleep(10000);  
 		}
-		return "Route completed";
+		
+		for (String y : derp) {
+			System.out.println(y); 				//testing purposes
+		}
+		return "Route completed - All points visited above";
+
 	}
 
 	@Override
@@ -105,20 +113,25 @@ public class Ez10 implements VehicleInterface {
 		// TODO Auto-generated method stub
 	}
 
-
 	@Override
-	public void pickPassenger(PassengerInterface passengerInterface) {
-		
-		
-		
-		passengersOnBoard.add(passengerInterface);
+	public void pickPassengers(BusStopInterface busStopInterface) {
+		for (int i = 0; i < busStopInterface.getPassengersWaiting().size(); i++) {
+			if (passengersOnBoard.size() < maxPassengers) {
+				passengersOnBoard.add(busStopInterface.pickUpPassenger());
+			}
+		}
 	}
 
 	@Override
 	public void setRoute(DirectionsRoute route) {
-		for (int i = 0; i < route.legs[0].steps.length; i++) {
-			DirectionsStep step = route.legs[0].steps[i];
-			currentRoute.put(i, step);
+		currentRoute = new HashMap<>();
+		int y = 0;
+		for (int i = 0; i < route.legs.length; i++) {
+			for (int x = 0;x < route.legs[i].steps.length; x++) {
+				DirectionsStep step = route.legs[i].steps[x];
+				currentRoute.put(y, step);
+				y++;
+			}
 		}
 	}
 
