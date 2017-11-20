@@ -1,6 +1,8 @@
 import static spark.Spark.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,24 +39,32 @@ public class Main {
 		busTestService.createBus(4);
 		BusStopService stopTestService = new BusStopService();
 		new BusStopController(stopTestService);
-		stopTestService.createStation(1, "Electric", "Warehouse", "Sello, Espoo");
-		stopTestService.createBusStop(2, "Siltakuja, Espoo");
-		
+		//stopTestService.createStation(1, "Electric", "Warehouse", "Sello, Espoo");
+		stopTestService.createBusStop(1, "Nöykkiön kirjasto, Espoo");
+		stopTestService.createBusStop(2, "Vuoriharjuntie 19, Espoo");
+
 		PassengerService passengerService = new PassengerService();
 		new PassengerController(passengerService);
-		
+
 		passengerService.createPassenger(1, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
 		passengerService.createPassenger(2, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
-		
+
 		stopTestService.getStop(2).addPassenger(passengerService.getPassengers(1));
 		stopTestService.getStop(2).addPassenger(passengerService.getPassengers(2));
-		stopTestService.getStop(2).pickUpPassengers(busTestService.getBus(1));
+		busTestService.getBus(1).pickPassengers(stopTestService.getStop(2));
 		
-		//System.out.println(busTestService.setBusRoute(2, "Siltakuja 2, Espoo", "Kauniainen, Espoo"));
-		//System.out.println(busTestService.driveCurrentRoute(2));
+		String[] waypoints = stopTestService.buildWaypoints();
+		busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", waypoints);
+		System.out.println(busTestService.driveCurrentRoute(2));
+		
+		
+		// System.out.println(busTestService.setBusRoute(2, "Siltakuja 2, Espoo",
+		// "Kauniainen, Espoo"));
+		// System.out.println(busTestService.driveCurrentRoute(2));
 
 		/*
-		 * Comment the controller block above and uncomment this to use only the REST API
+		 * Comment the controller block above and uncomment this to use only the REST
+		 * API
 		 * 
 		 * new BusStopController(new BusStopService()); new BusController(new
 		 * BusService());

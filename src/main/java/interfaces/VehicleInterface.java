@@ -7,13 +7,10 @@ import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
-	
 
 	public String moveTo() throws InterruptedException;
 
 	public void fuelUp();
-
-	public void pickPassenger(PassengerInterface passengerInterface);
 
 	public void setRoute(DirectionsRoute route);
 
@@ -22,5 +19,7 @@ public interface VehicleInterface {
 	public int getMaxPassengers();
 
 	public List<PassengerInterface> getPassengersOnBoard();
+
+	void pickPassengers(BusStopInterface busStopInterface);
 
 }

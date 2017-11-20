@@ -15,8 +15,9 @@ public class BusController {
 		get("/buses/:id", (req, res) -> busService.getBus(Integer.valueOf(req.params("id"))), JsonUtils.json());
 
 		put("/buses", (req, res) -> busService.createBus(Integer.valueOf(req.queryParams("id"))), JsonUtils.json());
-		
-		put("/buses/:id", (req, res) -> busService.setBusRoute(Integer.valueOf(req.params("id")),req.queryParams("origin"), req.queryParams("destination")));
+
+		put("/buses/:id", (req, res) -> busService.setBusRoute(Integer.valueOf(req.params("id")),
+				req.queryParams("origin"), req.queryParams("destination")));
 
 		after((req, res) -> {
 			res.type("application/json");
