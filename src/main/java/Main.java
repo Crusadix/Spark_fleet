@@ -23,6 +23,7 @@ import controllers.PassengerController;
 import services.BusService;
 import services.BusStopService;
 import services.PassengerService;
+import utilities.DistanceUtils;
 import utilities.FleetManager;
 
 public class Main {
@@ -44,24 +45,22 @@ public class Main {
 		fleetManagement.addBusService("Espoo", busTestService);
 		fleetManagement.addBusStopService("Espoo", stopTestService);
 		fleetManagement.addPassengerService("Espoo", passengerTestService);
-	
-		
 		
 		// This block is for testing purposes
-		busTestService.createBus(1);
-		busTestService.createBus(2);
-		busTestService.createBus(3);
 		busTestService.createBus(4);
-		stopTestService.createBusStop(1, "Nöykkiön kirjasto, Espoo");
-		stopTestService.createBusStop(2, "Vuoriharjuntie 19, Espoo");
-		passengerTestService.createPassenger(1, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
-		passengerTestService.createPassenger(2, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
-		stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(1));
-		stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));
-		busTestService.getBus(1).pickPassengers(stopTestService.getStop(2));
-		busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-
-
+		busTestService.createBus(7);
+		busTestService.createBus(8);
+		busTestService.createBus(25);
+		stopTestService.createBusStop(4, "Nöykkiön kirjasto, Espoo");
+		stopTestService.createBusStop(6, "Vuoriharjuntie 19, Espoo");
+		passengerTestService.createPassenger(3, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
+		passengerTestService.createPassenger(7, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
+		//stopTestService.getStop(4).addPassenger(passengerTestService.getPassengers(3));
+		//stopTestService.getStop(6).addPassenger(passengerTestService.getPassengers(7));
+		//busTestService.getBus(25).pickPassengers(stopTestService.getStop(4));
+		//busTestService.setRouteWaypoints(25, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
+		passengerTestService.moveToBusStop(3, 4);
+ 
 	}
 
 	static int getHerokuAssignedPort() {

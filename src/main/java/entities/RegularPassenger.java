@@ -13,4 +13,10 @@ public class RegularPassenger implements PassengerInterface {
 		this.origin = origin;
 		this.destination = destination;
 	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
 }

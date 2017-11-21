@@ -19,9 +19,9 @@ import utilities.MapsSingletonUtils;
 
 public class BusService {
 
+	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	FleetManager fleetManagement = FleetManager.getInstance();
 	private Map<Integer, VehicleInterface> buses = new HashMap<>();
-	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	GeoApiContext context = mapsUtils.getGeoApiContext();
 	Gson gson = mapsUtils.getGsonBuilder();
 
@@ -29,7 +29,7 @@ public class BusService {
 		return new ArrayList<>(buses.values());
 	}
 
-	public ArrayList<DirectionsStep> getRoute(int id) {
+	public List<DirectionsStep> getRoute(int id) {
 		return buses.get(id).getRoute();
 	}
 
@@ -59,7 +59,7 @@ public class BusService {
 		DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
 		directionsRequest.origin(origin);
 		directionsRequest.destination(destination);
-		directionsRequest.waypoints(fleetManagement.getBusStopServices().get(zone).buildWaypoints());
+		directionsRequest.waypoints(fleetManagement.getBusStopServices().get("Espoo").buildWaypoints());  //build waypoints from ALL currently added bus-stops!
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
 		buses.get(id).setRoute(result.routes[0]);

@@ -15,4 +15,6 @@ public interface BusStopInterface {
 
 	public String getLocationCoords();
 
+	public int getId(); 
+	
 }

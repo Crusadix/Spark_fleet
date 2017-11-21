@@ -14,12 +14,12 @@ public interface VehicleInterface {
 
 	public void setRoute(DirectionsRoute route);
 
-	public ArrayList<DirectionsStep> getRoute();
+	public List<DirectionsStep> getRoute();
 
 	public int getMaxPassengers();
 
 	public List<PassengerInterface> getPassengersOnBoard();
 
-	void pickPassengers(BusStopInterface busStopInterface);
+	String pickPassengers(BusStopInterface busStopInterface);
 
 }

@@ -42,4 +42,10 @@ public class Station implements BusStopInterface {
 		return null;
 	}
 
+	@Override
+	public int getId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

@@ -26,6 +26,10 @@ public class BusStop implements BusStopInterface {
 	public List<PassengerInterface> getPassengers() {
 		return currentPassengers;
 	}
+	
+	public int getId() {
+		return id; 
+	}
 
 	@Override
 	public Stack<PassengerInterface> getPassengersWaiting() {
@@ -34,6 +38,7 @@ public class BusStop implements BusStopInterface {
 
 	@Override
 	public PassengerInterface pickUpPassenger() {
+		System.out.println("Passenger picked up at: " + location);
 		return currentPassengers.pop();
 	}
 
