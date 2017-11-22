@@ -19,10 +19,10 @@ public class BusStopController {
 			String fuelType = req.queryParams("fuelType");
 
 			if ((storageType != null) || (fuelType != null)) {
-				return busStopService.createStation(Integer.valueOf(req.queryParams("id")), fuelType, storageType,
+				return busStopService.createStation(fuelType, storageType,
 						req.queryParams("location"));
 			} else {
-				return busStopService.createBusStop(Integer.valueOf(req.queryParams("id")), req.queryParams("location"));
+				return busStopService.createBusStop(req.queryParams("location"));
 
 			}
 		}, JsonUtils.json());

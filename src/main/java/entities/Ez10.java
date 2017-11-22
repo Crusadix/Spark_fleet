@@ -14,13 +14,15 @@ import com.google.maps.model.LatLng;
 import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
 import interfaces.VehicleInterface;
+import services.BusStopService;
 import utilities.FleetManager;
 
 public class Ez10 implements VehicleInterface {
 
 	private String name = "EasyMile EZ10";
-	private int id;
+
 	private long batteryLevel;
+	private int id;
 	private long range;
 	private double maxSpeed; // KM/h -- functions as the "Average Speed" of the bus
 	private double maxSpeedMeters; // M/S
@@ -34,8 +36,8 @@ public class Ez10 implements VehicleInterface {
 	private List<PassengerInterface> passengersOnBoard = new ArrayList<>();
 	private LatLng location;
 
-	public Ez10(int ezId) {
-		this.id = ezId;
+	public Ez10(int id) {
+		this.id = id;
 		this.batteryLevel = 100;
 		this.range = 0;
 		this.maxSpeed = 1200;
@@ -48,12 +50,8 @@ public class Ez10 implements VehicleInterface {
 		this.operatingType = "onDemand";
 	}
 
-	public int getBusId() {
+	public int getId() {
 		return id;
-	}
-
-	public long getBatteryLevel() {
-		return batteryLevel;
 	}
 
 	public String setBatteryLevel(String batteryLevel) {
@@ -61,21 +59,9 @@ public class Ez10 implements VehicleInterface {
 		return batteryLevel;
 	}
 
-	public double getMaxSpeed() {
-		return maxSpeed;
-	}
-
 	public void setMaxSpeed(double maxSpeed) {
 		this.maxSpeed = maxSpeed;
 		this.maxSpeedMeters = maxSpeed / 3.6;
-	}
-
-	public int getMaxPassengers() {
-		return maxPassengers;
-	}
-
-	public void setMaxPassengers(int maxPassengers) {
-		this.maxPassengers = maxPassengers;
 	}
 
 	public List<PassengerInterface> getPassengersOnBoard() {
@@ -83,11 +69,12 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	@Override
-	public String moveTo() throws InterruptedException {
+	public String driveRoute() throws InterruptedException {
 
 		// - VERY MESSY CODE - FIX IT
 
 		FleetManager fleetManagement = FleetManager.getInstance();
+		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 
 		ArrayList<String> derp = new ArrayList<String>(); // testing purposes
 
@@ -101,9 +88,9 @@ public class Ez10 implements VehicleInterface {
 					+ String.valueOf(System.currentTimeMillis()));
 			Thread.sleep((long) timeToMove * 1000); // simulate bus movement
 			this.location = nextStep.endLocation;
-			// System.out.println("Arrived at " + this.location.toString() + ". Waiting 10
-			// seconds for passengers.");
-			fleetManagement.getBusStopServices().get("Espoo").pickUpPassengers(this.location.toString(), this);
+			System.out.println("Arrived at " + this.location.toString() + ". Waiting 10 seconds for passengers.");
+			busStopService.dropOffPassengers(this.location.toString(), this);
+			busStopService.pickUpPassengers(this.location.toString(), this);
 			Thread.sleep(1000);
 		}
 
@@ -125,7 +112,8 @@ public class Ez10 implements VehicleInterface {
 			if (passengersOnBoard.size() < maxPassengers) {
 				passengersOnBoard.add(busStopInterface.pickUpPassenger());
 			}
-		} return "Success";
+		}
+		return "Success";
 	}
 
 	@Override
@@ -140,5 +128,16 @@ public class Ez10 implements VehicleInterface {
 
 	public List<DirectionsStep> getRoute() {
 		return currentRoute;
+	}
+
+	@Override
+	public int getMaxPassengers() {
+		return maxPassengers;
+	}
+
+	@Override
+	public void dropPassenger(PassengerInterface passenger) {
+		passengersOnBoard.remove(passenger);
+		//passengersOnBoard.remove(passengersOnBoard.contains(passenger.getId()));
 	}
 }

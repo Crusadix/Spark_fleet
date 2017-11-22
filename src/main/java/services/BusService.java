@@ -13,6 +13,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsStep;
 import entities.Ez10;
+import interfaces.BusStopInterface;
 import interfaces.VehicleInterface;
 import utilities.FleetManager;
 import utilities.MapsSingletonUtils;
@@ -21,36 +22,49 @@ public class BusService {
 
 	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	FleetManager fleetManagement = FleetManager.getInstance();
-	private Map<Integer, VehicleInterface> buses = new HashMap<>();
+	private List<VehicleInterface> buses = new ArrayList<>();
 	GeoApiContext context = mapsUtils.getGeoApiContext();
 	Gson gson = mapsUtils.getGsonBuilder();
+	
+	private static int busId = 0;
+	
+	public int genId() {
+		BusService.busId ++;
+		return busId;
+	}
 
 	public List<VehicleInterface> getAllBuses() {
-		return new ArrayList<>(buses.values());
+		return buses;
 	}
 
 	public List<DirectionsStep> getRoute(int id) {
-		return buses.get(id).getRoute();
+		return getBus(id).getRoute();
 	}
 
 	public VehicleInterface getBus(int id) {
-		return buses.get(id);
+		for (VehicleInterface temp : buses) {
+			if (temp.getId() == id) {
+				return temp;
+			}
+		}
+		System.out.println("DID NOT FIND BUS - BusService getBus");
+		return null;
 	}
 
-	public VehicleInterface createBus(int id) {
-		VehicleInterface newBus = new Ez10(id);
-		buses.put(id, newBus);
+	public VehicleInterface createBus() {
+		VehicleInterface newBus = new Ez10(genId());
+		buses.add(newBus);
 		return newBus;
 	}
 
 	public String driveCurrentRoute(int id) throws ApiException, InterruptedException, IOException {
-		return buses.get(id).moveTo();
+		return getBus(id).driveRoute();
 	}
 
 	public String setRoute(int id, String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
-		buses.get(id).setRoute(result.routes[0]);
+		getBus(id).setRoute(result.routes[0]);
 		return gson.toJson(result);
 	}
 
@@ -62,7 +76,7 @@ public class BusService {
 		directionsRequest.waypoints(fleetManagement.getBusStopServices().get("Espoo").buildWaypoints());  //build waypoints from ALL currently added bus-stops!
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
-		buses.get(id).setRoute(result.routes[0]);
+		getBus(id).setRoute(result.routes[0]);
 		return gson.toJson(result);
 	}
 

@@ -20,6 +20,7 @@ import com.google.maps.model.TravelMode;
 import controllers.BusController;
 import controllers.BusStopController;
 import controllers.PassengerController;
+import interfaces.PassengerInterface;
 import services.BusService;
 import services.BusStopService;
 import services.PassengerService;
@@ -47,20 +48,23 @@ public class Main {
 		fleetManagement.addPassengerService("Espoo", passengerTestService);
 		
 		// This block is for testing purposes
-		busTestService.createBus(4);
-		busTestService.createBus(7);
-		busTestService.createBus(8);
-		busTestService.createBus(25);
-		stopTestService.createBusStop(4, "Nöykkiön kirjasto, Espoo");
-		stopTestService.createBusStop(6, "Vuoriharjuntie 19, Espoo");
-		passengerTestService.createPassenger(3, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
-		passengerTestService.createPassenger(7, "Siltakuja 2, Espoo", "Kauniainen, Espoo");
-		//stopTestService.getStop(4).addPassenger(passengerTestService.getPassengers(3));
-		//stopTestService.getStop(6).addPassenger(passengerTestService.getPassengers(7));
+		busTestService.createBus();
+		busTestService.createBus();
+		busTestService.createBus();
+		busTestService.createBus();
+		stopTestService.createBusStop("Nöykkiön kirjasto, Espoo");
+		stopTestService.createBusStop("Vuoriharjuntie 19, Espoo");
+		stopTestService.createBusStop("Rajamäentie, Espoo");
+		stopTestService.createBusStop("Siltakuja, Espoo");
+		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		//stopTestService.getStop(1).addPassenger(passengerTestService.getPassengers(1));
+		//stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));
 		//busTestService.getBus(25).pickPassengers(stopTestService.getStop(4));
-		//busTestService.setRouteWaypoints(25, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-		passengerTestService.moveToBusStop(3, 4);
- 
+		//passengerTestService.moveToBusStop(3, 4);
+		busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
+		busTestService.driveCurrentRoute(1);
+
 	}
 
 	static int getHerokuAssignedPort() {

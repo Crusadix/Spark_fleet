@@ -8,6 +8,7 @@ import com.google.maps.errors.ApiException;
 import utilities.MapsSingletonUtils;
 import utilities.DistanceUtils;
 import entities.BusStop;
+import entities.Ez10;
 import entities.Station;
 import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
@@ -19,6 +20,13 @@ public class BusStopService {
 	DistanceUtils distanceUtils = DistanceUtils.getInstance();
 	private List<BusStopInterface> stops = new ArrayList<>();
 
+	private static int stopId = 0;
+
+	public int genId() {
+		BusStopService.stopId++;
+		return stopId;
+	}
+
 	public List<BusStopInterface> getAllStops() {
 		return stops;
 	}
@@ -26,7 +34,6 @@ public class BusStopService {
 	public BusStopInterface getStop(int id) {
 		for (BusStopInterface temp : stops) {
 			if (temp.getId() == id) {
-
 				return temp;
 			}
 		}
@@ -45,16 +52,14 @@ public class BusStopService {
 		return coords;
 	}
 
-	public BusStopInterface createStation(int id, String fuelType, String storageType, String location) {
-		BusStopInterface newStop = new Station(id, fuelType, storageType, location);
+	public BusStopInterface createStation(String fuelType, String storageType, String location) {
+		BusStopInterface newStop = new Station(genId(), fuelType, storageType, location);
 		stops.add(newStop);
 		return newStop;
 	}
 
-	public BusStopInterface createBusStop(int id, String location)
-			throws ApiException, InterruptedException, IOException {
-		BusStopInterface newStop = new BusStop(id, location, mapsUtils.getGeocode(location)); // last parameter =
-																								// lat,lon
+	public BusStopInterface createBusStop(String location) throws ApiException, InterruptedException, IOException {
+		BusStopInterface newStop = new BusStop(genId(), location, mapsUtils.getGeocode(location));
 		stops.add(newStop);
 		return newStop;
 	}
@@ -76,4 +81,27 @@ public class BusStopService {
 			}
 		}
 	}
+
+	/*
+	 * Checks distance to all stops, then checks whether passenger destination is
+	 * close to the stops close-by. Unloads passengers one by one. coords is the
+	 * string value for the lat,lon of the bus stop in question!
+	 */
+	public void dropOffPassengers(String coords, VehicleInterface vehicle) {
+		for (int x = 0; x < (stops.size()); x++) {
+			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), coords) < 50) {
+				List<PassengerInterface> droppingPassangers = new ArrayList<>();
+				for (PassengerInterface tempPassenger : vehicle.getPassengersOnBoard()) {
+					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), coords) < 50) {
+						droppingPassangers.add(tempPassenger);
+					}
+				}
+				for (PassengerInterface tempPassenger : droppingPassangers) {
+					vehicle.dropPassenger(tempPassenger);
+					System.out.println("Dropped passanger id: " + tempPassenger.getId());
+				}
+			}
+		}
+	}
+
 }

@@ -1,14 +1,12 @@
 package interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
 
-	public String moveTo() throws InterruptedException;
+	public String driveRoute() throws InterruptedException;
 
 	public void fuelUp();
 
@@ -20,6 +18,11 @@ public interface VehicleInterface {
 
 	public List<PassengerInterface> getPassengersOnBoard();
 
-	String pickPassengers(BusStopInterface busStopInterface);
+	public String pickPassengers(BusStopInterface busStopInterface);
+
+	public int getId();
+
+	public void dropPassenger(PassengerInterface passenger);
+
 
 }

@@ -14,14 +14,14 @@ public class BusController {
 
 		get("/buses/:id", (req, res) -> busService.getBus(Integer.valueOf(req.params("id"))), JsonUtils.json());
 
-		post("/buses/:id", (req, res) -> busService.driveCurrentRoute(Integer.valueOf(req.params("id"))));
+		post("/buses/:id", (req, res) -> busService.driveCurrentRoute(Integer.valueOf(req.params("id"))), JsonUtils.json());
 		
-		put("/buses", (req, res) -> busService.createBus(Integer.valueOf(req.queryParams("id"))), JsonUtils.json());
+		put("/buses", (req, res) -> busService.createBus(), JsonUtils.json());
 
 		put("/buses/:id", (req, res) -> busService.setRouteWaypoints(Integer.valueOf(req.params("id")),
 				req.queryParams("origin"),
 				req.queryParams("destination"),
-				req.queryParams("zone")));
+				req.queryParams("zone")), JsonUtils.json());
 
 		after((req, res) -> {
 			res.type("application/json");
