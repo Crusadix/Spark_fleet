@@ -6,7 +6,7 @@ import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
 
-	public String driveRoute() throws InterruptedException;
+	public void driveRoute() throws InterruptedException;
 
 	public void fuelUp();
 
@@ -24,5 +24,5 @@ public interface VehicleInterface {
 
 	public void dropPassenger(PassengerInterface passenger);
 
-
+	public String getLocation();
 }

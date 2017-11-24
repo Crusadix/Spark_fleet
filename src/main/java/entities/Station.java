@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.List;
 import java.util.Stack;
 import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
@@ -11,41 +12,42 @@ public class Station implements BusStopInterface {
 	private String fuelingUpType;
 	private String storageType;
 	private String location;
+	private String locationCoords;
+	private Stack<PassengerInterface> currentPassengers = new Stack<>();
 
-	public Station(int id, String fuelingUpType, String storageType, String location) {
-		this.id= id;
+	public Station(int id, String fuelingUpType, String storageType, String location, String locationCoords) {
+		this.id = id;
 		this.fuelingUpType = fuelingUpType;
 		this.storageType = storageType;
 		this.location = location;
+		this.locationCoords = locationCoords;
 	}
 
-	@Override
 	public void addPassenger(PassengerInterface passenger) {
-		// TODO Auto-generated method stub
+		currentPassengers.add(passenger);
+	}
+
+	public List<PassengerInterface> getPassengers() {
+		return currentPassengers;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	@Override
 	public Stack<PassengerInterface> getPassengersWaiting() {
-		// TODO Auto-generated method stub
-		return null;
+		return currentPassengers;
 	}
 
 	@Override
-	public PassengerInterface pickUpPassenger() {
-		// TODO Auto-generated method stub
+	public PassengerInterface pickUpPassenger(PassengerInterface passenger) {
+		//TODO
 		return null;
 	}
 
 	@Override
 	public String getLocationCoords() {
-		// TODO Auto-generated method stub
-		return null;
+		return locationCoords;
 	}
-
-	@Override
-	public int getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }

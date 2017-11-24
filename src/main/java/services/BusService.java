@@ -22,10 +22,9 @@ public class BusService {
 
 	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	FleetManager fleetManagement = FleetManager.getInstance();
-	private List<VehicleInterface> buses = new ArrayList<>();
 	GeoApiContext context = mapsUtils.getGeoApiContext();
 	Gson gson = mapsUtils.getGsonBuilder();
-	
+	private List<VehicleInterface> buses = new ArrayList<>();
 	private static int busId = 0;
 	
 	public int genId() {
@@ -47,7 +46,7 @@ public class BusService {
 				return temp;
 			}
 		}
-		System.out.println("DID NOT FIND BUS - BusService getBus");
+		System.out.println("Error has occurred in BusService - bus not found");  //Needs implementation of fault tolerance - returning null is bad practice
 		return null;
 	}
 
@@ -58,7 +57,8 @@ public class BusService {
 	}
 
 	public String driveCurrentRoute(int id) throws ApiException, InterruptedException, IOException {
-		return getBus(id).driveRoute();
+		getBus(id).driveRoute();
+		return "Driving current route";
 	}
 
 	public String setRoute(int id, String origin, String destination)
@@ -71,9 +71,10 @@ public class BusService {
 	public String setRouteWaypoints(int id, String origin, String destination, String zone)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
+		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		directionsRequest.origin(origin);
 		directionsRequest.destination(destination);
-		directionsRequest.waypoints(fleetManagement.getBusStopServices().get("Espoo").buildWaypoints());  //build waypoints from ALL currently added bus-stops!
+		directionsRequest.waypoints(busStopService.buildWaypoints());  //build waypoints from ALL currently added bus-stops!
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
 		getBus(id).setRoute(result.routes[0]);

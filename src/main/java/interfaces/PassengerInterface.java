@@ -6,4 +6,6 @@ public interface PassengerInterface {
 
 	String getDestinationCoords();
 
+	void setStatus(String string);
+
 }

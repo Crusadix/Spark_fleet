@@ -1,7 +1,7 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import interfaces.BusStopInterface;
 import interfaces.PassengerInterface;
 
@@ -10,8 +10,8 @@ public class BusStop implements BusStopInterface {
 	private String name = "Bus stop";
 	private int id;
 	private String location;
-	private String locationCoords; 
-	private Stack<PassengerInterface> currentPassengers = new Stack<>();
+	private String locationCoords;
+	private List<PassengerInterface> currentPassengers = new ArrayList<>();
 
 	public BusStop(int id, String location, String locationCoords) {
 		this.id = id;
@@ -26,20 +26,22 @@ public class BusStop implements BusStopInterface {
 	public List<PassengerInterface> getPassengers() {
 		return currentPassengers;
 	}
-	
+
 	public int getId() {
-		return id; 
+		return id;
 	}
 
 	@Override
-	public Stack<PassengerInterface> getPassengersWaiting() {
+	public List<PassengerInterface> getPassengersWaiting() {
 		return currentPassengers;
 	}
 
 	@Override
-	public PassengerInterface pickUpPassenger() {
+	public PassengerInterface pickUpPassenger(PassengerInterface passenger) {
+		PassengerInterface tempPassenger = currentPassengers.get(currentPassengers.indexOf(passenger));
+		currentPassengers.remove(currentPassengers.indexOf(passenger));
 		System.out.println("Passenger picked up at: " + location);
-		return currentPassengers.pop();
+		return tempPassenger;
 	}
 
 	@Override

@@ -19,7 +19,6 @@ public class BusStopService {
 	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	DistanceUtils distanceUtils = DistanceUtils.getInstance();
 	private List<BusStopInterface> stops = new ArrayList<>();
-
 	private static int stopId = 0;
 
 	public int genId() {
@@ -37,10 +36,9 @@ public class BusStopService {
 				return temp;
 			}
 		}
-		System.out.println("DID NOT FIND - busstopservice getStop");
+		System.out.println("Stop not found - BusStopService");
 		return null;
 	}
-
 	/*
 	 * Get coordinates for ALL the currently existing stops!
 	 */
@@ -52,10 +50,10 @@ public class BusStopService {
 		return coords;
 	}
 
-	public BusStopInterface createStation(String fuelType, String storageType, String location) {
-		BusStopInterface newStop = new Station(genId(), fuelType, storageType, location);
-		stops.add(newStop);
-		return newStop;
+	public BusStopInterface createStation(String fuelType, String storageType, String location) throws ApiException, InterruptedException, IOException {
+		BusStopInterface newStation = new Station(genId(), fuelType, storageType, location, mapsUtils.getGeocode(location));
+		stops.add(newStation);
+		return newStation;
 	}
 
 	public BusStopInterface createBusStop(String location) throws ApiException, InterruptedException, IOException {
@@ -67,41 +65,37 @@ public class BusStopService {
 	public void addPassenger(int stopId, PassengerInterface passenger) {
 		getStop(stopId).addPassenger(passenger);
 	}
-
 	/*
 	 * Checks distance to every current bus-stop, if close picks up passengers.
-	 * coords is the string value for the lat,lon of the bus stop in question!
 	 */
-	public void pickUpPassengers(String coords, VehicleInterface vehicle) {
-		for (int x = 0; x < (stops.size()); x++) {
-			if (stops.get(x).getPassengersWaiting().size() > 0) {
-				if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), coords) < 50) {
-					vehicle.pickPassengers(stops.get(x));
+	public void pickUpPassengers(VehicleInterface vehicle) {
+		for (BusStopInterface busStop : stops) {
+			if (busStop.getPassengersWaiting().size() > 0) {
+				if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocation()) < 50) {
+					vehicle.pickPassengers(busStop);
 				}
 			}
 		}
 	}
-
 	/*
 	 * Checks distance to all stops, then checks whether passenger destination is
-	 * close to the stops close-by. Unloads passengers one by one. coords is the
-	 * string value for the lat,lon of the bus stop in question!
+	 * close to the stops close-by. Unloads passengers one by one.
 	 */
-	public void dropOffPassengers(String coords, VehicleInterface vehicle) {
+	public void dropOffPassengers(VehicleInterface vehicle) {
 		for (int x = 0; x < (stops.size()); x++) {
-			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), coords) < 50) {
+			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocation()) < 50) {
 				List<PassengerInterface> droppingPassangers = new ArrayList<>();
 				for (PassengerInterface tempPassenger : vehicle.getPassengersOnBoard()) {
-					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), coords) < 50) {
+					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), vehicle.getLocation()) < 50) {
 						droppingPassangers.add(tempPassenger);
 					}
 				}
 				for (PassengerInterface tempPassenger : droppingPassangers) {
 					vehicle.dropPassenger(tempPassenger);
+					tempPassenger.setStatus("Delivered");
 					System.out.println("Dropped passanger id: " + tempPassenger.getId());
 				}
 			}
 		}
 	}
-
 }

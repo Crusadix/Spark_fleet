@@ -16,7 +16,6 @@ public class FleetManager {
 	private HashMap<String,PassengerService> passengerServices = new HashMap<String,PassengerService>();
 	
 	private FleetManager() {
-		
 	}
 	
 	public void addBusService (String zone, BusService busService) {
@@ -44,6 +43,4 @@ public class FleetManager {
 	public static FleetManager getInstance() {
 		return fleetManager;
 	}
-	
-	
 }

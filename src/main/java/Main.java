@@ -58,12 +58,28 @@ public class Main {
 		stopTestService.createBusStop("Siltakuja, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo"); 
+		
 		//stopTestService.getStop(1).addPassenger(passengerTestService.getPassengers(1));
 		//stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));
 		//busTestService.getBus(25).pickPassengers(stopTestService.getStop(4));
 		//passengerTestService.moveToBusStop(3, 4);
 		busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-		busTestService.driveCurrentRoute(1);
+		//busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 
 	}
 
