@@ -77,7 +77,6 @@ public class Ez10 implements VehicleInterface {
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		ArrayList<String> pointsVisited = new ArrayList<String>(); 							// testing purposes
 		System.out.println("Current range: " +range);
-
 		Flowable.fromCallable(() -> {
 		for (int i = 0; i < currentRoute.size(); i++) {
 			DirectionsStep nextStep = currentRoute.get(i);
@@ -88,8 +87,8 @@ public class Ez10 implements VehicleInterface {
 					+ String.valueOf(System.currentTimeMillis()));
 			simulateDrive(timeToMove);
 			this.location = nextStep.endLocation;
-			System.out.println("Arrived at " + this.location.toString() + ". Waiting 10 seconds for passengers.");
-			busStopService.dropOffPassengers(this.location.toString(), this);
+			System.out.println("Arrived at " + getLocation() + ". Waiting 10 seconds for passengers.");
+			busStopService.dropOffPassengers(this);
 			busStopService.pickUpPassengers(this);
 			Thread.sleep(1);
 		}
@@ -139,7 +138,6 @@ public class Ez10 implements VehicleInterface {
 
 	@Override
 	public String getLocation() {
-		// TODO Auto-generated method stub
 		return location.toString();
 	}
 	

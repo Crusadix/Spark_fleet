@@ -7,6 +7,8 @@ public interface BusStopInterface {
 	public List<PassengerInterface> getPassengersWaiting();
 
 	public void addPassenger(PassengerInterface passenger);
+	
+	public void removePassenger(PassengerInterface passenger);
 
 	public String getLocationCoords();
 

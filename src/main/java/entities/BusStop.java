@@ -21,6 +21,10 @@ public class BusStop implements BusStopInterface {
 	public void addPassenger(PassengerInterface passenger) {
 		currentPassengers.add(passenger);
 	}
+	
+	public void removePassenger(PassengerInterface passenger) {
+		currentPassengers.remove(currentPassengers.indexOf(passenger));
+	}
 
 	public int getId() {
 		return id;

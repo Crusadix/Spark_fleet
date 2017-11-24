@@ -43,4 +43,10 @@ public class Station implements BusStopInterface {
 	public String getLocationCoords() {
 		return locationCoords;
 	}
+
+	@Override
+	public void removePassenger(PassengerInterface passenger) {
+		// TODO Auto-generated method stub
+		
+	}
 }

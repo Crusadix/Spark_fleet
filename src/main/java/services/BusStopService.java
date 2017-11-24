@@ -5,14 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.maps.errors.ApiException;
-import utilities.MapsSingletonUtils;
-import utilities.DistanceUtils;
-import entities.BusStop;
-import entities.Ez10;
-import entities.Station;
-import interfaces.BusStopInterface;
-import interfaces.PassengerInterface;
-import interfaces.VehicleInterface;
+import utilities.*;
+import entities.*;
+import interfaces.*;
 
 public class BusStopService {
 
@@ -78,12 +73,12 @@ public class BusStopService {
 	 * close to the stops close-by. Unloads passengers one by one. coords is the
 	 * string value for the lat,lon of the bus stop in question!
 	 */
-	public void dropOffPassengers(String coords, VehicleInterface vehicle) {
+	public void dropOffPassengers(VehicleInterface vehicle) {
 		for (int x = 0; x < (stops.size()); x++) {
-			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), coords) < 50) {
+			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocation()) < 50) {
 				List<PassengerInterface> droppingPassangers = new ArrayList<>();
 				for (PassengerInterface tempPassenger : vehicle.getPassengersOnBoard()) {
-					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), coords) < 50) {
+					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), vehicle.getLocation()) < 50) {
 						droppingPassangers.add(tempPassenger);
 					}
 				}
@@ -97,13 +92,23 @@ public class BusStopService {
 	}
 
 	public void pickUpPassengers(VehicleInterface vehicle) {
-		for (int x = 0; x < (stops.size()); x++) {
+		
+		for (BusStopInterface busStop : stops) {
+			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocation()) < 50) {
+				for (int y = 0; y < busStop.getPassengersWaiting().size();y++) {
+					vehicle.pickPassenger(busStop.getPassengersWaiting().get(y));
+					busStop.removePassenger(busStop.getPassengersWaiting().get(y));
+				}
+			}
+		}
+		
+		/*for (int x = 0; x < (stops.size()); x++) {
 			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocation()) < 50) {
 				for (int y = 0; y < stops.get(x).getPassengersWaiting().size();y++) {
 					vehicle.pickPassenger(stops.get(x).getPassengersWaiting().get(y));
 					stops.get(x).getPassengersWaiting().remove(y);
 				}
 			}
-		}
+		} */
 	}
 }
