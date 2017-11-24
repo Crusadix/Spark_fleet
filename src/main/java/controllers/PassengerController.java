@@ -1,9 +1,8 @@
 package controllers;
 
 import static spark.Spark.*;
-
-import services.PassengerService;
-import utilities.JsonUtils;
+import services.*;
+import utilities.*;
 
 public class PassengerController {
 

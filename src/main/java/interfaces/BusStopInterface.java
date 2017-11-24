@@ -1,7 +1,6 @@
 package interfaces;
 
 import java.util.List;
-import java.util.Stack;
 
 public interface BusStopInterface {
 
@@ -13,6 +12,5 @@ public interface BusStopInterface {
 
 	public int getId();
 
-	public PassengerInterface pickUpPassenger(PassengerInterface passenger); 
 	
 }

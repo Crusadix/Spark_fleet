@@ -2,8 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import interfaces.BusStopInterface;
-import interfaces.PassengerInterface;
+import interfaces.*;
 
 public class BusStop implements BusStopInterface {
 
@@ -23,10 +22,6 @@ public class BusStop implements BusStopInterface {
 		currentPassengers.add(passenger);
 	}
 
-	public List<PassengerInterface> getPassengers() {
-		return currentPassengers;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -36,13 +31,6 @@ public class BusStop implements BusStopInterface {
 		return currentPassengers;
 	}
 
-	@Override
-	public PassengerInterface pickUpPassenger(PassengerInterface passenger) {
-		PassengerInterface tempPassenger = currentPassengers.get(currentPassengers.indexOf(passenger));
-		currentPassengers.remove(currentPassengers.indexOf(passenger));
-		System.out.println("Passenger picked up at: " + location);
-		return tempPassenger;
-	}
 
 	@Override
 	public String getLocationCoords() {

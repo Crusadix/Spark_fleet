@@ -1,9 +1,8 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
-import interfaces.BusStopInterface;
-import interfaces.PassengerInterface;
+import interfaces.*;
 
 public class Station implements BusStopInterface {
 
@@ -13,7 +12,7 @@ public class Station implements BusStopInterface {
 	private String storageType;
 	private String location;
 	private String locationCoords;
-	private Stack<PassengerInterface> currentPassengers = new Stack<>();
+	private List<PassengerInterface> currentPassengers = new ArrayList<>();
 
 	public Station(int id, String fuelingUpType, String storageType, String location, String locationCoords) {
 		this.id = id;
@@ -36,14 +35,8 @@ public class Station implements BusStopInterface {
 	}
 
 	@Override
-	public Stack<PassengerInterface> getPassengersWaiting() {
+	public List<PassengerInterface> getPassengersWaiting() {
 		return currentPassengers;
-	}
-
-	@Override
-	public PassengerInterface pickUpPassenger(PassengerInterface passenger) {
-		//TODO
-		return null;
 	}
 
 	@Override

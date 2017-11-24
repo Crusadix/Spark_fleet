@@ -18,11 +18,16 @@ public interface VehicleInterface {
 
 	public List<PassengerInterface> getPassengersOnBoard();
 
-	public String pickPassengers(BusStopInterface busStopInterface);
+	//public String pickPassengers(BusStopInterface busStopInterface);
 
 	public int getId();
 
 	public void dropPassenger(PassengerInterface passenger);
 
 	public String getLocation();
+
+	public void pickPassenger(PassengerInterface passenger);
+	
+	//public void addPassenger(PassengerInterface passenger);
+
 }

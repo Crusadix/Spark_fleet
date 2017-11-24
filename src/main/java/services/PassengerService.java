@@ -2,14 +2,11 @@ package services;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com.google.maps.errors.ApiException;
-import entities.RegularPassenger;
-import interfaces.PassengerInterface;
-import utilities.FleetManager;
+import entities.*;
+import interfaces.*;
+import utilities.*;
 
 public class PassengerService {
 

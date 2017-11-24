@@ -2,9 +2,7 @@ package services;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import com.google.gson.Gson;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -12,18 +10,15 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsStep;
-import entities.Ez10;
-import interfaces.BusStopInterface;
-import interfaces.VehicleInterface;
-import utilities.FleetManager;
-import utilities.MapsSingletonUtils;
+import entities.*;
+import interfaces.*;
+import utilities.*;
 
 public class BusService {
 
-	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	FleetManager fleetManagement = FleetManager.getInstance();
-	GeoApiContext context = mapsUtils.getGeoApiContext();
-	Gson gson = mapsUtils.getGsonBuilder();
+	GeoApiContext context = MapsSingletonUtils.getGeoApiContext();
+	Gson gson = MapsSingletonUtils.getGsonBuilder();
 	private List<VehicleInterface> buses = new ArrayList<>();
 	private static int busId = 0;
 	
@@ -58,7 +53,7 @@ public class BusService {
 
 	public String driveCurrentRoute(int id) throws ApiException, InterruptedException, IOException {
 		getBus(id).driveRoute();
-		return "Driving current route";
+		return "Driving current route, bus number: " + id;
 	}
 
 	public String setRoute(int id, String origin, String destination)

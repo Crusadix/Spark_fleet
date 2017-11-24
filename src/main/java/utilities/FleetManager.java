@@ -1,16 +1,11 @@
 package utilities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import services.BusService;
-import services.BusStopService;
-import services.PassengerService;
+import services.*;
 
 public class FleetManager {
 
 	private static FleetManager fleetManager = new FleetManager();
-	
 	private HashMap<String, BusService> busServices = new HashMap<String, BusService>();
 	private HashMap<String,BusStopService> busStopServices = new HashMap<String,BusStopService>();
 	private HashMap<String,PassengerService> passengerServices = new HashMap<String,PassengerService>();

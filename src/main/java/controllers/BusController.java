@@ -1,10 +1,8 @@
 package controllers;
 
-import services.BusService;
-import utilities.JsonUtils;
+import services.*;
+import utilities.*;
 import static spark.Spark.*;
-
-import interfaces.VehicleInterface;
 
 public class BusController {
 

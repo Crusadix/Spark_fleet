@@ -1,16 +1,10 @@
 package entities;
 
 import java.io.IOException;
-import java.util.List;
-
 import com.google.maps.errors.ApiException;
-
-import interfaces.BusStopInterface;
-import interfaces.PassengerInterface;
-import services.BusStopService;
-import utilities.DistanceUtils;
-import utilities.FleetManager;
-import utilities.MapsSingletonUtils;
+import interfaces.*;
+import services.*;
+import utilities.*;
 
 public class RegularPassenger implements PassengerInterface {
 

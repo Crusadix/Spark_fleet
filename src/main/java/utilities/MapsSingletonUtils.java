@@ -11,12 +11,10 @@ import com.google.maps.model.GeocodingResult;
 public class MapsSingletonUtils {
 
 	private static MapsSingletonUtils mapsUtils = new MapsSingletonUtils();
-	private static GeoApiContext context;
-	private static Gson gson;
+	private static GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyCnKfFi02VENIr0EXMND16fdBYSjxfncHA").build();
+	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	private MapsSingletonUtils() {
-		this.context = new GeoApiContext.Builder().apiKey("AIzaSyCnKfFi02VENIr0EXMND16fdBYSjxfncHA").build();
-		this.gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 
 	public static MapsSingletonUtils getInstance() {
@@ -32,7 +30,7 @@ public class MapsSingletonUtils {
 	}
 
 	public String getGeocode(String location) throws ApiException, InterruptedException, IOException {
-		GeocodingResult[] results = GeocodingApi.geocode(mapsUtils.getGeoApiContext(), location).await();
+		GeocodingResult[] results = GeocodingApi.geocode(getGeoApiContext(), location).await();
 		return Double.toString(results[0].geometry.location.lat) + ","
 				+ Double.toString(results[0].geometry.location.lng);
 	}
