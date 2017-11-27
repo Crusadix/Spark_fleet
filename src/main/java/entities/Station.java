@@ -25,9 +25,9 @@ public class Station implements BusStopInterface {
 	public void addPassenger(PassengerInterface passenger) {
 		currentPassengers.add(passenger);
 	}
-
-	public List<PassengerInterface> getPassengers() {
-		return currentPassengers;
+	
+	public void removePassenger(PassengerInterface passenger) {
+		currentPassengers.remove(currentPassengers.indexOf(passenger));
 	}
 
 	public int getId() {
@@ -39,14 +39,9 @@ public class Station implements BusStopInterface {
 		return currentPassengers;
 	}
 
+
 	@Override
 	public String getLocationCoords() {
 		return locationCoords;
-	}
-
-	@Override
-	public void removePassenger(PassengerInterface passenger) {
-		// TODO Auto-generated method stub
-		
 	}
 }

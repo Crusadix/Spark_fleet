@@ -64,14 +64,8 @@ public class BusStopService {
 	}
 
 	/*
-	 * Checks distance to every current bus-stop, if close picks up passengers.
-	 * coords is the string value for the lat,lon of the bus stop in question!
-	 */
-
-	/*
 	 * Checks distance to all stops, then checks whether passenger destination is
-	 * close to the stops close-by. Unloads passengers one by one. coords is the
-	 * string value for the lat,lon of the bus stop in question!
+	 * close to the stops close-by. 
 	 */
 	public void dropOffPassengers(VehicleInterface vehicle) {
 		for (int x = 0; x < (stops.size()); x++) {
@@ -101,14 +95,5 @@ public class BusStopService {
 				}
 			}
 		}
-		
-		/*for (int x = 0; x < (stops.size()); x++) {
-			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocation()) < 50) {
-				for (int y = 0; y < stops.get(x).getPassengersWaiting().size();y++) {
-					vehicle.pickPassenger(stops.get(x).getPassengersWaiting().get(y));
-					stops.get(x).getPassengersWaiting().remove(y);
-				}
-			}
-		} */
 	}
 }

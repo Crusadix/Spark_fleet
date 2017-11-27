@@ -2,18 +2,15 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.LatLng;
-import interfaces.BusStopInterface;
-import interfaces.PassengerInterface;
-import interfaces.VehicleInterface;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import services.BusStopService;
-import utilities.FleetManager;
+import services.*;
+import utilities.*;
+import interfaces.*;
 
 public class Ez10 implements VehicleInterface {
 
