@@ -11,7 +11,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
-import entities.*;
+import factories.BusFactory;
 import interfaces.*;
 import utilities.*;
 
@@ -21,12 +21,7 @@ public class BusService {
 	GeoApiContext context = MapsSingletonUtils.getGeoApiContext();
 	Gson gson = MapsSingletonUtils.getGsonBuilder();
 	private List<VehicleInterface> buses = new ArrayList<>();
-	private static int busId = 0;
-	
-	public int genId() {
-		BusService.busId ++;
-		return busId;
-	}
+	BusFactory busFactory = new BusFactory(); 
 
 	public List<VehicleInterface> getAllBuses() {
 		return buses;
@@ -46,10 +41,9 @@ public class BusService {
 		return null;
 	}
 
-	public VehicleInterface createBus() {
-		VehicleInterface newBus = new Ez10(genId());
-		buses.add(newBus);
-		return newBus;
+	public String createBus() {
+		buses.add(busFactory.getVehicle());
+		return "Bus created";
 	}
 
 	public String driveCurrentRoute(int id) throws ApiException, InterruptedException, IOException {
@@ -57,10 +51,10 @@ public class BusService {
 		return "Driving current route, bus number: " + id;
 	}
 
-	public String setRoute(int id, String origin, String destination)
+	public String setIntendedRoute(int id, String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
-		getBus(id).setRoute(result.routes[0]);
+		getBus(id).setIntendedRoute(result.routes[0]);
 		return gson.toJson(result);
 	}
 	
@@ -79,7 +73,7 @@ public class BusService {
 		directionsRequest.waypoints(busStopService.buildWaypoints());  //build waypoints from ALL currently added bus-stops!
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
-		getBus(id).setRoute(result.routes[0]);
+		getBus(id).setIntendedRoute(result.routes[0]);
 		return gson.toJson(result);
 	}
 }

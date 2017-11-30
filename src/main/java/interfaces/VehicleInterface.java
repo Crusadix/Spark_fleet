@@ -11,7 +11,7 @@ public interface VehicleInterface {
 
 	public void fuelUp() throws InterruptedException;
 
-	public void setRoute(DirectionsRoute route);
+	public void setIntendedRoute(DirectionsRoute route);
 
 	public List<DirectionsStep> getRoute();
 
@@ -23,11 +23,13 @@ public interface VehicleInterface {
 
 	public void dropPassenger(PassengerInterface passenger);
 
-	public String getLocation();
+	public String getLocationCoords();
 
 	public void pickPassenger(PassengerInterface passenger);
 
 	void driveRouteMetro() throws InterruptedException, ApiException, IOException;
+
+	void setKeepDrivingCurrentRoute(boolean driveOption);
 }
 
 //Vehicle ez10 = BusFactory.createEasymileBus();

@@ -4,19 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.maps.errors.ApiException;
-import entities.*;
+import factories.PassengerFactory;
 import interfaces.*;
 import utilities.*;
 
 public class PassengerService {
 
+	private PassengerFactory passengerFactory = new PassengerFactory();
 	private List<PassengerInterface> passengers = new ArrayList<>();
-	private static int passengerId = 0;
-
-	public int genId() {
-		PassengerService.passengerId++;
-		return passengerId;
-	}
 
 	public List<PassengerInterface> getAllPassengers() {
 		for (PassengerInterface temp : passengers) {
@@ -35,11 +30,10 @@ public class PassengerService {
 		return null;
 	}
 
-	public PassengerInterface createPassenger(String origin, String destination)
+	public String createPassenger(String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
-		PassengerInterface newPassenger = new RegularPassenger(genId(), origin, destination);
-		passengers.add(newPassenger);
-		return newPassenger;
+		passengers.add(passengerFactory.getPassenger(origin, destination));
+		return "Passenger created";
 	}
 
 	public String moveToBusStop(int passengerId, int stopId) {
