@@ -40,4 +40,18 @@ public class BusStop implements BusStopInterface {
 	public String getLocationCoords() {
 		return locationCoords;
 	}
+	@Override
+	public void fuelVehicle (VehicleInterface vehicle) {
+		System.out.println("Unsupported for bus-stops");
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getLocation() {
+		return location;
+	}
 }

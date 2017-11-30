@@ -9,6 +9,7 @@ import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 import entities.*;
 import interfaces.*;
@@ -52,7 +53,7 @@ public class BusService {
 	}
 
 	public String driveCurrentRoute(int id) throws ApiException, InterruptedException, IOException {
-		getBus(id).driveRoute();
+		getBus(id).driveRouteMetro();
 		return "Driving current route, bus number: " + id;
 	}
 
@@ -61,6 +62,12 @@ public class BusService {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
 		getBus(id).setRoute(result.routes[0]);
 		return gson.toJson(result);
+	}
+	
+	public DirectionsRoute getRouteLatLon(int id, String originLatLon, String destinationLatLon)
+			throws ApiException, InterruptedException, IOException {
+		DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
+		return result.routes[0];
 	}
 
 	public String setRouteWaypoints(int id, String origin, String destination, String zone)
@@ -75,5 +82,4 @@ public class BusService {
 		getBus(id).setRoute(result.routes[0]);
 		return gson.toJson(result);
 	}
-
 }

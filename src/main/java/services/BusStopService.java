@@ -14,7 +14,6 @@ public class BusStopService {
 	MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 	DistanceUtils distanceUtils = DistanceUtils.getInstance();
 	private List<BusStopInterface> stops = new ArrayList<>();
-
 	private static int stopId = 0;
 
 	public int genId() {
@@ -33,7 +32,7 @@ public class BusStopService {
 			}
 		}
 		System.out.println("Stop not found - BusStopService");
-		return null;
+		return null; //bad practise
 	}
 
 	/*
@@ -67,7 +66,9 @@ public class BusStopService {
 	 * Checks distance to all stops, then checks whether passenger destination is
 	 * close to the stops close-by. 
 	 */
-	public void dropOffPassengers(VehicleInterface vehicle) {
+	public void dropOffPassengers(VehicleInterface vehicle) throws InterruptedException {
+		System.out.println("Arrived at " + vehicle.getLocation() + ". Waiting 5 seconds for passengers to get off.");
+		Thread.sleep(1);
 		for (int x = 0; x < (stops.size()); x++) {
 			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocation()) < 50) {
 				List<PassengerInterface> droppingPassangers = new ArrayList<>();
@@ -85,8 +86,9 @@ public class BusStopService {
 		}
 	}
 
-	public void pickUpPassengers(VehicleInterface vehicle) {
-		
+	public void pickUpPassengers(VehicleInterface vehicle) throws InterruptedException {
+		System.out.println("Waiting 5 seconds for passengers to get on.");
+		Thread.sleep(1);
 		for (BusStopInterface busStop : stops) {
 			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocation()) < 50) {
 				for (int y = 0; y < busStop.getPassengersWaiting().size();y++) {

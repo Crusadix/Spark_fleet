@@ -1,14 +1,15 @@
 package interfaces;
 
+import java.io.IOException;
 import java.util.List;
+
+import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
 
-	public void driveRoute() throws InterruptedException;
-
-	public void fuelUp();
+	public void fuelUp() throws InterruptedException;
 
 	public void setRoute(DirectionsRoute route);
 
@@ -26,6 +27,7 @@ public interface VehicleInterface {
 
 	public void pickPassenger(PassengerInterface passenger);
 
+	void driveRouteMetro() throws InterruptedException, ApiException, IOException;
 }
 
 //Vehicle ez10 = BusFactory.createEasymileBus();

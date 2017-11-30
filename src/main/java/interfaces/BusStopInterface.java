@@ -13,6 +13,10 @@ public interface BusStopInterface {
 	public String getLocationCoords();
 
 	public int getId();
-
 	
+	public void fuelVehicle (VehicleInterface vehicle);
+	
+	public String getName();
+
+	public String getLocation();
 }

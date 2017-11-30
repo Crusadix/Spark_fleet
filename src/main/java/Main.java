@@ -31,9 +31,9 @@ public class Main {
 		busTestService.createBus();
 		busTestService.createBus();
 		stopTestService.createBusStop("Nöykkiön kirjasto, Espoo");
-		stopTestService.createBusStop("Vuoriharjuntie 19, Espoo");
 		stopTestService.createBusStop("Rajamäentie, Espoo");
-		stopTestService.createBusStop("Siltakuja, Espoo");
+		stopTestService.createStation("Electric", "Storage hall", "Tuomarila, Espoo");
+		stopTestService.createStation("Electric", "Storage hall", "Vuoriharjuntie 19, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
 		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
@@ -56,6 +56,7 @@ public class Main {
 		//busTestService.getBus(25).pickPassengers(stopTestService.getStop(4));
 		//passengerTestService.moveToBusStop(3, 4);
 		busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
+		busTestService.driveCurrentRoute(1);
 		//busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 
 	}

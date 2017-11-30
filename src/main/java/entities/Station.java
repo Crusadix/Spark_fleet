@@ -21,6 +21,11 @@ public class Station implements BusStopInterface {
 		this.location = location;
 		this.locationCoords = locationCoords;
 	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
 
 	public void addPassenger(PassengerInterface passenger) {
 		currentPassengers.add(passenger);
@@ -28,6 +33,10 @@ public class Station implements BusStopInterface {
 	
 	public void removePassenger(PassengerInterface passenger) {
 		currentPassengers.remove(currentPassengers.indexOf(passenger));
+	}
+	
+	public void fuelVehicle (VehicleInterface vehicle) {
+		
 	}
 
 	public int getId() {
@@ -43,5 +52,10 @@ public class Station implements BusStopInterface {
 	@Override
 	public String getLocationCoords() {
 		return locationCoords;
+	}
+
+	@Override
+	public String getLocation() {
+		return location;
 	}
 }
