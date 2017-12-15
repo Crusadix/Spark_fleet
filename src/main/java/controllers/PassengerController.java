@@ -16,7 +16,9 @@ public class PassengerController {
 				JsonUtils.json());
 
 		put("/passengers", (req, res) -> {
-			return passengerService.createPassenger(req.queryParams("origin"), req.queryParams("destination"));
+			return passengerService.createPassenger(
+					req.queryParams("origin"), 
+					req.queryParams("destination"));
 		}, JsonUtils.json());
 
 		after((req, res) -> {

@@ -14,6 +14,7 @@ public class RegularPassenger implements PassengerInterface {
 	private String originCoords;
 	private String destinationCoords;
 	private String status;
+	private String currentCoords;
 
 	public RegularPassenger(int id, String origin, String destination, String originCoords, String destinationCoords) {
 		this.id = id;
@@ -21,7 +22,8 @@ public class RegularPassenger implements PassengerInterface {
 		this.destination = destination;
 		this.status = "waiting";
 		this.originCoords = originCoords; 
-		this.destinationCoords = destinationCoords;;
+		this.currentCoords = originCoords; 
+		this.destinationCoords = destinationCoords;
 		addPassengerToNearbyStop();
 	}
 	
@@ -31,11 +33,22 @@ public class RegularPassenger implements PassengerInterface {
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		for (int x = 0; x < (busStopService.getAllStops().size()); x++) {
 			if (distanceUtils.getDistanceMeters(busStopService.getAllStops().get(x).getLocationCoords(),
-					originCoords) < 50) {
+					originCoords) < 100) {
 				busStopService.addPassenger(busStopService.getAllStops().get(x).getId(), this);
 			}
 		}
 	}
+	
+	@Override
+	public void setCurrentCoords(String currentCoords) {
+		this.currentCoords = currentCoords;
+	}
+	
+	@Override
+	public String getCurrentCoords() {
+		return currentCoords;
+	}
+
 
 	@Override
 	public int getId() {
@@ -49,5 +62,10 @@ public class RegularPassenger implements PassengerInterface {
 	@Override
 	public void setStatus(String newStatus) {
 		this.status = newStatus;
+	}
+	
+	@Override
+	public String getStatus() {
+		return status;
 	}
 }

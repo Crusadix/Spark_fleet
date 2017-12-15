@@ -27,9 +27,14 @@ public interface VehicleInterface {
 
 	public void pickPassenger(PassengerInterface passenger);
 
-	void driveRouteMetro() throws InterruptedException, ApiException, IOException;
-
 	void setKeepDrivingCurrentRoute(boolean driveOption);
+	
+	void setTimeToCurrentDestination(double timeToCurrentDestination);
+
+	void driveRoute() throws InterruptedException, ApiException, IOException;
+	
+	void setOperatingType(String operatingType);
+
 }
 
 //Vehicle ez10 = BusFactory.createEasymileBus();

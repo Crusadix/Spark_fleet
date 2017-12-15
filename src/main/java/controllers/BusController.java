@@ -12,15 +12,27 @@ public class BusController {
 
 		get("/buses/:id", (req, res) -> busService.getBus(Integer.valueOf(req.params("id"))), JsonUtils.json());
 
-		post("/buses/:id", (req, res) -> busService.driveCurrentRoute(Integer.valueOf(req.params("id"))), JsonUtils.json());
+		post("/buses/:id", (req, res) -> busService.driveCurrentRoute(Integer.valueOf(req.params("id")),
+				req.queryParams("operationType")), JsonUtils.json());
 		
 		put("/buses", (req, res) -> busService.createBus(), JsonUtils.json());
 
-		put("/buses/:id", (req, res) -> busService.setRouteWaypoints(Integer.valueOf(req.params("id")),
-				req.queryParams("origin"),
-				req.queryParams("destination"),
-				req.queryParams("zone")), JsonUtils.json());
-
+		put("/buses/:id", (req, res) -> {
+			String waypoints = req.queryParams("waypoints");
+			if (waypoints.equals("onDemand")) {
+				return busService.setRouteWaypointsOnDemand(Integer.valueOf(req.params("id")),
+						req.queryParams("origin"),
+						req.queryParams("destination"),
+						req.queryParams("zone"));
+			} else {
+				return busService.setRouteWaypoints(Integer.valueOf(req.params("id")),
+						req.queryParams("origin"),
+						req.queryParams("destination"),
+						waypoints,
+						req.queryParams("zone"));
+			}
+		}, JsonUtils.json());
+	
 		after((req, res) -> {
 			res.type("application/json");
 		});

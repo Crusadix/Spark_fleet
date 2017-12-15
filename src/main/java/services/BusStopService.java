@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsStep;
+
 import utilities.*;
 import factories.StopFactory;
 import interfaces.*;
@@ -25,16 +27,25 @@ public class BusStopService {
 			}
 		}
 		System.out.println("Stop not found - BusStopService");
-		return null; //bad practise
+		return null; //bad practice
 	}
 
 	/*
-	 * Get coordinates for ALL the currently existing stops!
+	 * Optimistic - if not found, return faulty list
 	 */
-	public String[] buildWaypoints() {
-		String[] coords = new String[stops.size()];
-		for (int x = 0; x < (stops.size()); x++) {
-			coords[x] = (stops.get(x).getLocationCoords());
+	public String[] buildWaypoints(String waypoints) {
+		if (waypoints.length() < 2) {
+			String[] coords = {getStop(Integer.parseInt(waypoints)).getLocationCoords()};
+			return coords;
+		}
+		String[] parts = waypoints.split(",");
+		String[] coords = new String[parts.length];
+		for (int y = 0; y < parts.length; y++) {
+			for (int x = 0; x < stops.size(); x++) {
+				if (Integer.parseInt(parts[y]) == stops.get(x).getId()) {
+					coords[y] = (stops.get(x).getLocationCoords());
+				}
+			}
 		}
 		return coords;
 	}
@@ -58,10 +69,12 @@ public class BusStopService {
 	 * close to the stops close-by. 
 	 */
 	public void dropOffPassengers(VehicleInterface vehicle) throws InterruptedException {
-		System.out.println("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
-		Thread.sleep(1);
 		for (int x = 0; x < (stops.size()); x++) {
-			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 50) {
+			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 100) {
+				System.out.println("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
+				Double timeToWaitAtDestination = 5.00;	//facilitates web-page to wait before asking directions
+				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
+				Thread.sleep(5000);
 				List<PassengerInterface> droppingPassangers = new ArrayList<>();
 				for (PassengerInterface tempPassenger : vehicle.getPassengersOnBoard()) {
 					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), vehicle.getLocationCoords()) < 50) {
@@ -70,21 +83,29 @@ public class BusStopService {
 				}
 				for (PassengerInterface tempPassenger : droppingPassangers) {
 					vehicle.dropPassenger(tempPassenger);
-					tempPassenger.setStatus("Delivered");
-					System.out.println("Dropped passanger id: " + tempPassenger.getId());
 				}
 			}
 		}
 	}
 
 	public void pickUpPassengers(VehicleInterface vehicle) throws InterruptedException {
-		System.out.println("Waiting 5 seconds for passengers to get on.");
-		Thread.sleep(1);
 		for (BusStopInterface busStop : stops) {
-			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 50) {
+			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 100) {
+				System.out.println("Waiting 5 seconds for passengers to get on.");
+				Double timeToWaitAtDestination = 5.00; //facilitates web-page to wait before asking directions
+				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
+				Thread.sleep(5000);
+				List<PassengerInterface> pickingPassangers = new ArrayList<>();
 				for (int y = 0; y < busStop.getPassengersWaiting().size();y++) {
-					vehicle.pickPassenger(busStop.getPassengersWaiting().get(y));
-					busStop.removePassenger(busStop.getPassengersWaiting().get(y));
+					for (BusStopInterface endBusStop : stops) {
+						if (distanceUtils.getDistanceMeters(busStop.getPassengersWaiting().get(y).getDestinationCoords(), endBusStop.getLocationCoords()) < 100) {
+							pickingPassangers.add(busStop.getPassengersWaiting().get(y));
+						}
+					}
+				}
+				for (PassengerInterface passenger : pickingPassangers) {
+					vehicle.pickPassenger(passenger);
+					busStop.removePassenger(passenger);
 				}
 			}
 		}

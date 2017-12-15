@@ -19,7 +19,7 @@ public class Ez10 implements VehicleInterface {
 
 	private String name = "EasyMile EZ10";
 	private int id;
-	private double range; // Operating distance left
+	private double range; // Operating seconds left - calculated from 14h battery capacity
 	private double maxSpeed; // KM/h -- functions as the "Average Speed" of the bus
 	private double maxSpeedMeters; // M/S
 	private int turnAngle;
@@ -32,25 +32,37 @@ public class Ez10 implements VehicleInterface {
 	private List<DirectionsStep> intendedRoute = new ArrayList<>();
 	private List<DirectionsStep> currentRoute = new ArrayList<>();
 	private List<PassengerInterface> passengersOnBoard = new ArrayList<>();
+	private List<PassengerInterface> nearbyPassengers = new ArrayList<>();
 	private LatLng locationCoords;
 	private boolean keepDrivingCurrentRoute;
-
-	ArrayList<String> pointsVisited = new ArrayList<String>(); // test purposes
+	private LatLng currentDestination;
+	private double timeToCurrentDestination;
+	private long destinationUpdateTimeStamp; // possibly temporary - needed for updating bus correctly on map
+	DistanceUtils distanceUtils = DistanceUtils.getInstance();
 
 	public Ez10(int id) {
 		this.id = id;
-		this.maxSpeed = 1200;
-		this.maxSpeedMeters = this.maxSpeed / 3.6;
+		setMaxSpeed(300);
 		this.turnAngle = 35;
 		this.width = 200; // CM
 		this.length = 400; // CM
 		this.height = 275; // CM
 		this.maxPassengers = 12;
-		// this.range = 14 * 60 * 60 * maxSpeedMeters;
-		this.range = 5; // test purposes, the one above is the correct one
+		this.range = 14 * 60 * 60 * maxSpeedMeters;
 		this.operatingFuel = "Electric";
-		this.operatingType = "Metro"; // Stop on every bus-stop
+		this.operatingType = "metro";
 		this.keepDrivingCurrentRoute = true;
+	}
+
+	@Override
+	public void setOperatingType(String operatingType) {
+		this.operatingType = operatingType;
+	}
+
+	@Override
+	public void setTimeToCurrentDestination(double timeToCurrentDestination) {
+		this.timeToCurrentDestination = timeToCurrentDestination;
+		destinationUpdateTimeStamp = System.currentTimeMillis();
 	}
 
 	public int getId() {
@@ -72,45 +84,111 @@ public class Ez10 implements VehicleInterface {
 	 * Currently drives to a route final destination and drives the same route back.
 	 * Also assumes the current location of the bus is the first point of the route.
 	 */
+
 	@Override
-	public void driveRouteMetro() throws InterruptedException, ApiException, IOException {
+	public void driveRoute() throws InterruptedException, ApiException, IOException {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		currentRoute = intendedRoute;
 		locationCoords = currentRoute.get(0).startLocation;
-		if (calculateRouteLeft(intendedRoute.get(0)) < (range * 0.9)) {
-			Flowable.fromCallable(() -> {
+		System.out.println(operatingType);
+		if (calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
+			Flowable<String> source = Flowable.fromCallable(() -> {
+				busStopService.dropOffPassengers(this);
+				busStopService.pickUpPassengers(this);
 				for (int i = 0; i < currentRoute.size(); i++) {
 					DirectionsStep currentStep = currentRoute.get(i);
+					currentDestination = currentStep.endLocation;
 					simulateDriveToNextStep(currentStep);
-					busStopService.dropOffPassengers(this);
-					busStopService.pickUpPassengers(this);
+					if (operatingType.equals("metro")) {
+						busStopService.dropOffPassengers(this);
+						busStopService.pickUpPassengers(this);
+					} else if (operatingType.equals("busRoute") && (getBooleanPassengersNearby(currentStep)
+							|| getBooleanPassengerDestinationNearby(currentStep))) {
+						busStopService.dropOffPassengers(this);
+						busStopService.pickUpPassengers(this);
+					} else if (operatingType.equals("onDemand")) {
+						setKeepDrivingCurrentRoute(false);
+						if (getBooleanPassengerDestinationNearby(currentStep)) {
+							dropOffPassengersOnDemand();
+						}
+						if (getBooleanPassengersNearby(currentStep)) {
+							pickUpNearbyPassengersOnDemand();
+						}
+					}
 				}
+				currentDestination = null;
 				if (keepDrivingCurrentRoute) {
 					setKeepDrivingCurrentRoute(false); // test - drive set route and back, then stop
 					intendedRoute = getCurrentRouteInverted();
-					driveRouteMetro();
+					driveRoute();
 				}
 				return "Route completed";
-			}).subscribeOn(Schedulers.io()).observeOn(Schedulers.single()).subscribe(System.out::println,
-					Throwable::printStackTrace);
+			});
+			Flowable<String> runBackground = source.subscribeOn(Schedulers.io());
+			Flowable<String> showForeground = runBackground.observeOn(Schedulers.single());
+			showForeground.subscribe(System.out::println, Throwable::printStackTrace);
+
 		} else {
 			visitClosestStationFuelUp();
-			driveRouteMetro();
+			driveRoute();
 		}
 	}
-	
-	/*
-	 * 	pointsVisited.add(currentStep.endLocation.toString());
-	 * 	for (String point : pointsVisited) {
-					System.out.println(point);
-									}
-	 * 
-	 */
+
+	private void dropOffPassengersOnDemand() {
+		List<PassengerInterface> droppingPassengers = new ArrayList<>();
+		for (PassengerInterface passenger : passengersOnBoard) {
+			if (distanceUtils.getDistanceMeters(this.locationCoords.toString(),
+					passenger.getDestinationCoords()) < 100) {
+				droppingPassengers.add(passenger);
+			}
+		}
+		for (PassengerInterface passenger : droppingPassengers) {
+			dropPassenger(passenger);
+		}
+	}
+
+	private void pickUpNearbyPassengersOnDemand() {
+		for (PassengerInterface passenger : nearbyPassengers) {
+			pickPassenger(passenger);
+		}
+	}
+
+	private boolean getBooleanPassengerDestinationNearby(DirectionsStep currentStep) {
+		for (PassengerInterface passenger : passengersOnBoard) {
+			if (distanceUtils.getDistanceMeters(this.locationCoords.toString(),
+					passenger.getDestinationCoords()) < 100) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean getBooleanPassengersNearby(DirectionsStep currentStep) {
+		FleetManager fleetManagement = FleetManager.getInstance();
+		PassengerService passengerService = fleetManagement.getPassengerServices().get("Espoo");
+		for (PassengerInterface passenger : passengerService.getAllPassengers()) {
+			if ((passenger.getStatus().equals("waiting")) && (distanceUtils.getDistanceMeters(this.getLocationCoords(),
+					passenger.getCurrentCoords()) < 100)) {
+				for (DirectionsStep step : currentRoute) {
+					if (distanceUtils.getDistanceMeters(passenger.getDestinationCoords(),
+							step.endLocation.toString()) < 100) {
+						nearbyPassengers.add(passenger);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	private List<DirectionsStep> getCurrentRouteInverted() {
 		List<DirectionsStep> tempRoute = new ArrayList<>();
 		for (int x = currentRoute.size() - 1; x >= 0; x--) {
+			LatLng newStart = currentRoute.get(x).endLocation;
+			LatLng newEnd = currentRoute.get(x).startLocation;
+			currentRoute.get(x).startLocation = newStart;
+			currentRoute.get(x).endLocation = newEnd;
 			tempRoute.add(currentRoute.get(x));
 		}
 		return tempRoute;
@@ -147,15 +225,17 @@ public class Ez10 implements VehicleInterface {
 	public void fuelUp() throws InterruptedException {
 		Thread.sleep(5000); // actual charging takes about 7 hours
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
-		;
 		System.out.println("Vehicle fueled up");
 	}
 
 	private void simulateDriveToNextStep(DirectionsStep currentStep) throws InterruptedException {
-		double distanceToTravel = currentStep.distance.inMeters;
-		double timeToMove = distanceToTravel / maxSpeedMeters;
 		this.locationCoords = currentStep.startLocation;
-		System.out.println("Currently at: " + getLocationCoords() + ", next stop at "
+		double distanceToTravel = currentStep.distance.inMeters;
+		double timeToMove = distanceToTravel / maxSpeedMeters; // seconds
+		timeToCurrentDestination = currentStep.distance.inMeters / maxSpeedMeters; // seconds
+		destinationUpdateTimeStamp = System.currentTimeMillis();
+		nearbyPassengers = new ArrayList<>();
+		System.out.println("Bus id: " + this.getId() + ", currently at: " + getLocationCoords() + ", next stop at "
 				+ currentStep.endLocation.toString() + " moving will take " + timeToMove + " seconds");
 		Thread.sleep((long) timeToMove * 1000);
 		range = (long) (range - distanceToTravel);
@@ -165,20 +245,34 @@ public class Ez10 implements VehicleInterface {
 	private BusStopInterface getClosestStation(DirectionsStep currentStep) {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
-		DistanceUtils distanceUtils = DistanceUtils.getInstance();
 		BusStopInterface closestStation = null;
 		double distance = 1000000;
 		for (BusStopInterface stop : busStopService.getAllStops()) {
 			if (stop.getName() == "Station") {
 				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
-						currentStep.endLocation.toString()) < distance) {
+						currentStep.startLocation.toString()) < distance) {
 					closestStation = stop;
 					distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
 				}
 			}
 		}
 		return closestStation;
-	}  
+	}
+
+	private BusStopInterface getClosestStop(DirectionsStep currentStep) {
+		FleetManager fleetManagement = FleetManager.getInstance();
+		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
+		BusStopInterface closestStop = null;
+		double distance = 1000000;
+		for (BusStopInterface stop : busStopService.getAllStops()) {
+			if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
+					currentStep.startLocation.toString()) < distance) {
+				closestStop = stop;
+				distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
+			}
+		}
+		return closestStop;
+	}
 
 	private long calculateRouteLeft(DirectionsStep currentStep) {
 		long routeLeft = 0;
@@ -207,17 +301,21 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	@Override
-	public void dropPassenger(PassengerInterface passenger) {
-		passengersOnBoard.remove(passenger);
-	}
-
-	@Override
 	public String getLocationCoords() {
 		return locationCoords.toString();
 	}
 
+	@Override
+	public void dropPassenger(PassengerInterface passenger) {
+		passengersOnBoard.remove(passenger);
+		passenger.setStatus("delivered");
+		System.out.println("Dropped passanger id: " + passenger.getId());
+	}
+
 	public void pickPassenger(PassengerInterface passenger) {
 		passengersOnBoard.add(passenger);
-		System.out.println("Picked up a passenger at: " + getLocationCoords());
+		passenger.setCurrentCoords("");
+		passenger.setStatus("on board");
+		System.out.println("Picked up passenger id: " + passenger.getId());
 	}
 }
