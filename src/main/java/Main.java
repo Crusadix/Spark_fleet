@@ -35,25 +35,42 @@ public class Main {
 		stopTestService.createStation("Electric", "Storage hall", "Tuomarila, Espoo");
 		stopTestService.createStation("Electric", "Storage hall", "Vuoriharjuntie 19, Espoo");
 		
-		passengerTestService.createPassenger("Nöykkiön kirjasto, Espoo", "Vuoriharjuntie 19, Espoo");
+		passengerTestService.createPassenger("Kaurakaski, Espoo", "Vuoriharjuntie 19, Espoo");
 		passengerTestService.createPassenger("Rajamäentie, Espoo", "Nöykkiön kirjasto, Espoo");
-		passengerTestService.createPassenger("Siltakuja, Espoo", "Nöykkiön kirjasto, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Kedonkukka, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Sunantie, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Niittytöyry, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Riimuniityntie, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Kantokaski, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Lehtikaskentie, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Kedonkukka, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Kedonkukka, Espoo");
+		passengerTestService.createPassenger("Siltakuja, Espoo", "Kedonkukka, Espoo");
 		passengerTestService.createPassenger("Tuomarila, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Tuomarila, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(3));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(4));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(5));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(6));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(7));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(8));
+		busTestService.getBus(1).pickPassenger(passengerTestService.getPassenger(9));
+
+		
 		/* //stopTestService.getStop(1).addPassenger(passengerTestService.getPassengers(1));
 		//stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));
-		//busTestService.getBus(25).pickPassengers(stopTestService.getStop(4));
+		
 		//passengerTestService.moveToBusStop(3, 4);
 		//busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 		//busTestService.dri,,veCurrentRoute(1);
 		//busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-
+	
 		busTestService.setRouteWaypointsOnDemand(1,
 				"Asemakuja, espoo",
 				"Siltakuja, espoo",
-				"Espoo");
-		*/
+				"Espoo");*/
+	
 	}
 
 	static int getHerokuAssignedPort() {

@@ -88,9 +88,10 @@ public class BusService {
 		MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 		DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
 		PassengerService passengerService = fleetManagement.getPassengerServices().get("Espoo");
+		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		directionsRequest.origin(origin);
 		directionsRequest.destination(destination);
-		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(mapsUtils.getGeocode(origin))); // where to pick up passengers? -> currently around origin
+		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(busService.getBus(id), mapsUtils.getGeocode(origin))); // where to pick up passengers? -> currently around origin
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
 		getBus(id).setIntendedRoute(result.routes[0]);

@@ -42,7 +42,7 @@ public class Ez10 implements VehicleInterface {
 
 	public Ez10(int id) {
 		this.id = id;
-		setMaxSpeed(300);
+		setMaxSpeed(20);
 		this.turnAngle = 35;
 		this.width = 200; // CM
 		this.length = 400; // CM
