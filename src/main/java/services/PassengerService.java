@@ -40,74 +40,59 @@ public class PassengerService {
 		return "Success";
 	}
 
-	// make a list of buses' passengers destinations and nearby passengers' coords and return it
+	// make a list of buses' passengers' destinations and nearby passengers' coords
+	// and return it
 	public String[] buildPassengerWaypoints(VehicleInterface vehicle, String locationCoords) {
-		String[] closestPassengerCoords;
-		List<PassengerInterface> orderedPassengersByDistance = new ArrayList<>();
-		List<PassengerInterface> passengersOnBoard = new ArrayList<>();
-		int pointer = 0;
-		for (PassengerInterface passenger : vehicle.getPassengersOnBoard()) {
-			boolean matchFound = false;
-			for (PassengerInterface passengerCheckDestinationDuplicate : passengersOnBoard) {
-				if (passenger.getDestinationCoords().equals(passengerCheckDestinationDuplicate.getDestinationCoords())) {
-					matchFound = true; 
-				}
-			}
-			if (!matchFound) {
-				passengersOnBoard.add(passenger);
-			}
-		}
-		
+		String[] waypointCoords;
+		List<PassengerInterface> orderedWaitingPassengersByDistance = new ArrayList<>();
+		List<PassengerInterface> passengersOnBoard = vehicle.getPassengersOnBoard();
+
 		for (PassengerInterface passenger : passengers) {
-			if (passenger.getStatus().equals("waiting")) {
-				boolean matchFound = false;
-				for (PassengerInterface passengerCheckDestinationDuplicate : orderedPassengersByDistance) {
-					if (passenger.getDestinationCoords().equals(passengerCheckDestinationDuplicate.getDestinationCoords())) {
-						matchFound = true; 
-					}
-				}
-				if (!matchFound) {
-					orderedPassengersByDistance.add(passenger);
-				}
+			if ((passenger.getStatus().equals("waiting")) && ((passengersOnBoard.size() + orderedWaitingPassengersByDistance.size()) < vehicle.getMaxPassengers())) {
+				orderedWaitingPassengersByDistance.add(passenger);
 			}
 		}
-		
-		if ((orderedPassengersByDistance.size() + passengersOnBoard.size()) >= 8) {
-			closestPassengerCoords = new String[8];
+		orderedWaitingPassengersByDistance = orderByDistance(orderedWaitingPassengersByDistance, locationCoords);
+
+		if ((orderedWaitingPassengersByDistance.size() + passengersOnBoard.size()) >= 8) {
+			waypointCoords = new String[8];
+		} else {
+			waypointCoords = new String[(orderedWaitingPassengersByDistance.size() + passengersOnBoard.size())];
 		}
-		else {
-			closestPassengerCoords = new String[(orderedPassengersByDistance.size() + passengersOnBoard.size())];
-		}
-		
-		for (; pointer < passengersOnBoard.size(); pointer++) {
-			closestPassengerCoords[pointer] = passengersOnBoard.get(pointer).getDestinationCoords();
-			if (pointer == 7) {
-				break;
-			}
+
+		int onBoardPointer = 0; 
+		int waitingPassengersPointer = 0;
+		for (int y = 0; y < waypointCoords.length; y++) {
 			
+			if (onBoardPointer < passengersOnBoard.size()) {
+				waypointCoords[y] = passengersOnBoard.get(onBoardPointer).getDestinationCoords();
+				onBoardPointer++;
+			}
+			else if(waitingPassengersPointer < orderedWaitingPassengersByDistance.size()) {
+				waypointCoords[y] = orderedWaitingPassengersByDistance.get(waitingPassengersPointer).getCurrentCoords();
+				orderedWaitingPassengersByDistance.get(waitingPassengersPointer).setStatus("bus on route");
+				waitingPassengersPointer++;
+			}
 		}
-		for (int x = 0; x < orderedPassengersByDistance.size() -1; x++) {
-			PassengerInterface tempXPassenger = orderedPassengersByDistance.get(x);
-			PassengerInterface shorterDistanceToXPassenger = orderedPassengersByDistance.get(x);
-			for (int y = x+1; y < orderedPassengersByDistance.size(); y++){
-				PassengerInterface tempYPassenger = orderedPassengersByDistance.get(y);
-				if (distanceUtils.getDistanceMeters(locationCoords,
-						tempXPassenger.getCurrentCoords()) > distanceUtils.getDistanceMeters(locationCoords,
-								tempYPassenger.getCurrentCoords())) {
+		return waypointCoords;
+	}
+
+	private List<PassengerInterface> orderByDistance(List<PassengerInterface> orderedWaitingPassengersByDistance,
+			String locationCoords) {
+		for (int x = 0; x < orderedWaitingPassengersByDistance.size() - 1; x++) {
+			PassengerInterface tempXPassenger = orderedWaitingPassengersByDistance.get(x);
+			PassengerInterface shorterDistanceToXPassenger = orderedWaitingPassengersByDistance.get(x);
+			for (int y = x + 1; y < orderedWaitingPassengersByDistance.size(); y++) {
+				PassengerInterface tempYPassenger = orderedWaitingPassengersByDistance.get(y);
+				if (distanceUtils.getDistanceMeters(locationCoords, tempXPassenger.getCurrentCoords()) > distanceUtils
+						.getDistanceMeters(locationCoords, tempYPassenger.getCurrentCoords())) {
 					shorterDistanceToXPassenger = tempYPassenger;
 				}
 			}
-			orderedPassengersByDistance.set(x, shorterDistanceToXPassenger);
-			orderedPassengersByDistance.set(orderedPassengersByDistance.indexOf(shorterDistanceToXPassenger), tempXPassenger);
+			orderedWaitingPassengersByDistance.set(x, shorterDistanceToXPassenger);
+			orderedWaitingPassengersByDistance
+					.set(orderedWaitingPassengersByDistance.indexOf(shorterDistanceToXPassenger), tempXPassenger);
 		}
-		for (int x = 0; x < closestPassengerCoords.length -1; x++) {
-			closestPassengerCoords[pointer] = orderedPassengersByDistance.get(x).getCurrentCoords();
-			if (pointer == 7) {
-				break;
-			}
-			pointer ++;
-		}
-
-		return closestPassengerCoords;
+		return orderedWaitingPassengersByDistance;
 	}
 }

@@ -65,11 +65,7 @@ public class Main {
 		//busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 		//busTestService.dri,,veCurrentRoute(1);
 		//busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-	
-		busTestService.setRouteWaypointsOnDemand(1,
-				"Asemakuja, espoo",
-				"Siltakuja, espoo",
-				"Espoo");*/
+	*/
 	
 	}
 

@@ -26,7 +26,7 @@ public class Ez10 implements VehicleInterface {
 	private int width; // CM
 	private int length; // CM
 	private int height; // CM
-	private int maxPassengers = 12;
+	private int maxPassengers;
 	private String operatingFuel = "Electric";
 	private String operatingType;
 	private List<DirectionsStep> intendedRoute = new ArrayList<>();
@@ -42,12 +42,12 @@ public class Ez10 implements VehicleInterface {
 
 	public Ez10(int id) {
 		this.id = id;
-		setMaxSpeed(20);
+		setMaxSpeed(600);
 		this.turnAngle = 35;
 		this.width = 200; // CM
 		this.length = 400; // CM
 		this.height = 275; // CM
-		this.maxPassengers = 12;
+		this.maxPassengers = 9;
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
 		this.operatingFuel = "Electric";
 		this.operatingType = "metro";
@@ -91,7 +91,6 @@ public class Ez10 implements VehicleInterface {
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		currentRoute = intendedRoute;
 		locationCoords = currentRoute.get(0).startLocation;
-		System.out.println(operatingType);
 		if (calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
 			Flowable<String> source = Flowable.fromCallable(() -> {
 				busStopService.dropOffPassengers(this);
@@ -108,7 +107,6 @@ public class Ez10 implements VehicleInterface {
 						busStopService.dropOffPassengers(this);
 						busStopService.pickUpPassengers(this);
 					} else if (operatingType.equals("onDemand")) {
-						setKeepDrivingCurrentRoute(false);
 						if (getBooleanPassengerDestinationNearby(currentStep)) {
 							dropOffPassengersOnDemand();
 						}
@@ -118,9 +116,18 @@ public class Ez10 implements VehicleInterface {
 					}
 				}
 				currentDestination = null;
-				if (keepDrivingCurrentRoute) {
+				if (keepDrivingCurrentRoute && !operatingType.equals("onDemand")) {
 					setKeepDrivingCurrentRoute(false); // test - drive set route and back, then stop
 					intendedRoute = getCurrentRouteInverted();
+					driveRoute();
+				} else if (keepDrivingCurrentRoute && operatingType.equals("onDemand")) {
+					setKeepDrivingCurrentRoute(false); // test - drive set route and back, then stop
+					BusService busService = fleetManagement.getBusServices().get("Espoo");
+					
+					System.out.println(this.locationCoords.toString() + "end " + this.currentRoute.get(0).startLocation.toString());
+					busService.setRouteWaypointsOnDemand(this.getId(),
+							this.locationCoords.toString(),
+							this.currentRoute.get(0).startLocation.toString(), "Espoo");
 					driveRoute();
 				}
 				return "Route completed";
@@ -167,19 +174,21 @@ public class Ez10 implements VehicleInterface {
 	private boolean getBooleanPassengersNearby(DirectionsStep currentStep) {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		PassengerService passengerService = fleetManagement.getPassengerServices().get("Espoo");
+		boolean passangersNearbyBoolean = false;
 		for (PassengerInterface passenger : passengerService.getAllPassengers()) {
-			if ((passenger.getStatus().equals("waiting")) && (distanceUtils.getDistanceMeters(this.getLocationCoords(),
-					passenger.getCurrentCoords()) < 100)) {
+			if ((passenger.getStatus().equals("waiting") || passenger.getStatus().equals("bus on route"))
+					&& (distanceUtils.getDistanceMeters(this.getLocationCoords(),
+							passenger.getCurrentCoords()) < 100)) {
 				for (DirectionsStep step : currentRoute) {
 					if (distanceUtils.getDistanceMeters(passenger.getDestinationCoords(),
 							step.endLocation.toString()) < 100) {
 						nearbyPassengers.add(passenger);
-						return true;
+						passangersNearbyBoolean = true;
 					}
 				}
 			}
 		}
-		return false;
+		return passangersNearbyBoolean;
 	}
 
 	private List<DirectionsStep> getCurrentRouteInverted() {
@@ -313,9 +322,10 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	public void pickPassenger(PassengerInterface passenger) {
+		if (!passengersOnBoard.contains(passenger)) {
 		passengersOnBoard.add(passenger);
 		passenger.setCurrentCoords("");
 		passenger.setStatus("on board");
-		System.out.println("Picked up passenger id: " + passenger.getId());
+		System.out.println("Picked up passenger id: " + passenger.getId()); }
 	}
 }
