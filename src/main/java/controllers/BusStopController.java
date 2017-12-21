@@ -25,7 +25,7 @@ public class BusStopController {
 
 			}
 		}, JsonUtils.json());
-
+		
 		after((req, res) -> {
 			res.type("application/json");
 		});

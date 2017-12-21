@@ -20,7 +20,7 @@ public class PassengerController {
 					req.queryParams("origin"), 
 					req.queryParams("destination"));
 		}, JsonUtils.json());
-
+		
 		after((req, res) -> {
 			res.type("application/json");
 		});
