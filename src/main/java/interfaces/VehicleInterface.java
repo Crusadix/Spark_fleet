@@ -25,7 +25,7 @@ public interface VehicleInterface {
 
 	public String getLocationCoords();
 
-	public void pickPassenger(PassengerInterface passenger);
+	public String pickPassenger(PassengerInterface passenger);
 
 	void setKeepDrivingCurrentRoute(boolean driveOption);
 	
@@ -34,6 +34,10 @@ public interface VehicleInterface {
 	void driveRoute() throws InterruptedException, ApiException, IOException;
 	
 	void setOperatingType(String operatingType);
+
+	int getFreeSeats();
+
+	void addToReservedSeats(PassengerInterface passenger);
 
 }
 

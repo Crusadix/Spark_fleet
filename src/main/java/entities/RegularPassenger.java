@@ -1,7 +1,5 @@
 package entities;
 
-import java.io.IOException;
-import com.google.maps.errors.ApiException;
 import interfaces.*;
 import services.*;
 import utilities.*;
@@ -48,15 +46,20 @@ public class RegularPassenger implements PassengerInterface {
 	public String getCurrentCoords() {
 		return currentCoords;
 	}
-
+	
+	@Override
+	public String getOriginCoords() {
+		return originCoords;
+	}
+	
+	@Override
+	public String getDestinationCoords() {
+		return destinationCoords;
+	}
 
 	@Override
 	public int getId() {
 		return id;
-	}
-
-	public String getDestinationCoords() {
-		return destinationCoords;
 	}
 
 	@Override

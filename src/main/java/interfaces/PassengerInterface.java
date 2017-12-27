@@ -13,4 +13,6 @@ public interface PassengerInterface {
 	String getCurrentCoords();
 
 	String getStatus();
+
+	String getOriginCoords();
 }

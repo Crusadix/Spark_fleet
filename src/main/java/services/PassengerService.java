@@ -46,9 +46,8 @@ public class PassengerService {
 		String[] waypointCoords;
 		List<PassengerInterface> orderedWaitingPassengersByDistance = new ArrayList<>();
 		List<PassengerInterface> passengersOnBoard = vehicle.getPassengersOnBoard();
-
 		for (PassengerInterface passenger : passengers) {
-			if ((passenger.getStatus().equals("waiting")) && ((passengersOnBoard.size() + orderedWaitingPassengersByDistance.size()) < vehicle.getMaxPassengers())) {
+			if ((passenger.getStatus().equals("waiting")) && ((passengersOnBoard.size() + orderedWaitingPassengersByDistance.size()) < vehicle.getFreeSeats())) {
 				orderedWaitingPassengersByDistance.add(passenger);
 			}
 		}
@@ -63,12 +62,12 @@ public class PassengerService {
 		int onBoardPointer = 0; 
 		int waitingPassengersPointer = 0;
 		for (int y = 0; y < waypointCoords.length; y++) {
-			
 			if (onBoardPointer < passengersOnBoard.size()) {
 				waypointCoords[y] = passengersOnBoard.get(onBoardPointer).getDestinationCoords();
 				onBoardPointer++;
 			}
 			else if(waitingPassengersPointer < orderedWaitingPassengersByDistance.size()) {
+				vehicle.addToReservedSeats(orderedWaitingPassengersByDistance.get(waitingPassengersPointer));
 				waypointCoords[y] = orderedWaitingPassengersByDistance.get(waitingPassengersPointer).getCurrentCoords();
 				orderedWaitingPassengersByDistance.get(waitingPassengersPointer).setStatus("bus on route");
 				waitingPassengersPointer++;
