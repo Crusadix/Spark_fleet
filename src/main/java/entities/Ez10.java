@@ -90,9 +90,9 @@ public class Ez10 implements VehicleInterface {
 	 * full route - if not, goes to station. 10% safety margin on route calculation.
 	 * Currently drives to a route final destination and drives the same route back.
 	 * Also assumes the current location of the bus is the first point of the route.
+	 * 
 	 * MESSY
 	 */
-
 	@Override
 	public void driveRoute() throws InterruptedException, ApiException, IOException {
 		currentRoute = intendedRoute;
@@ -344,6 +344,7 @@ public class Ez10 implements VehicleInterface {
 	@Override
 	public void setIntendedRoute(DirectionsRoute route) {
 		intendedRouteTimeStamp = System.currentTimeMillis();
+		intendedRoute = new ArrayList<>();
 		for (DirectionsLeg leg : route.legs) {
 			for (DirectionsStep step : leg.steps) {
 				intendedRoute.add(step);
