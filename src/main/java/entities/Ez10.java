@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.LatLng;
@@ -35,6 +36,7 @@ public class Ez10 implements VehicleInterface {
 	private List<PassengerInterface> passengersOnBoard = new ArrayList<>();
 	private List<PassengerInterface> reservedSeats = new ArrayList<>();
 	private List<PassengerInterface> nearbyPassengers = new ArrayList<>();
+	private DirectionsResult directionsOverview;
 	private LatLng locationCoords;
 	private boolean keepDrivingCurrentRoute;
 	private LatLng currentDestination;
@@ -148,11 +150,26 @@ public class Ez10 implements VehicleInterface {
 				intendedRoute = getCurrentRouteInverted();
 				driveRoute();
 			} else if (operatingType.equals("onDemand")) {
-				setKeepDrivingCurrentRoute(false); // test - drive set route and back, then stop
 				BusService busService = fleetManagement.getBusServices().get("Espoo");
-				busService.setRouteWaypointsOnDemand(this.getId(), this.locationCoords.toString(),
-						this.currentRoute.get(0).startLocation.toString(), "Espoo");
-				driveRoute();
+				PassengerService passengerService = fleetManagement.getPassengerServices().get("Espoo");
+				boolean driveRoute = false;
+				for (PassengerInterface passenger : passengerService.getAllPassengers()) {
+					if (passenger.getStatus().equals("waiting")) {
+						driveRoute = true;
+					} else {
+						for (PassengerInterface passengerOnBoard : passengersOnBoard) {
+							if (passengerOnBoard.getStatus().equals("on board")) {
+								driveRoute = true;
+
+							}
+						}
+					}
+				}
+				if (driveRoute) {
+					busService.setRouteWaypointsOnDemand(this.getId(), this.locationCoords.toString(),
+							this.currentRoute.get(0).startLocation.toString(), "Espoo");
+					driveRoute();
+				}
 			}
 		}
 	}
@@ -235,7 +252,6 @@ public class Ez10 implements VehicleInterface {
 				}
 			}
 		}
-
 		return passangersNearbyBoolean;
 	}
 
@@ -262,7 +278,7 @@ public class Ez10 implements VehicleInterface {
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		Stack<DirectionsStep> stationRoute = new Stack<>();
 		for (DirectionsLeg leg : busService.getRouteLatLon(this.id, this.getLocationCoords(),
-				this.getClosestStation(intendedRoute.get(0)).getLocationCoords()).legs) {
+				this.getClosestStop(intendedRoute.get(0), "Station").getLocationCoords()).legs) {
 			for (DirectionsStep step : leg.steps) {
 				stationRoute.add(step);
 			}
@@ -299,30 +315,19 @@ public class Ez10 implements VehicleInterface {
 		this.locationCoords = currentStep.endLocation;
 	}
 
-	private BusStopInterface getClosestStation(DirectionsStep currentStep) {
-		FleetManager fleetManagement = FleetManager.getInstance();
-		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
-		BusStopInterface closestStation = null;
-		double distance = 1000000;
-		for (BusStopInterface stop : busStopService.getAllStops()) {
-			if (stop.getName() == "Station") {
-				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
-						currentStep.startLocation.toString()) < distance) {
-					closestStation = stop;
-					distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
-				}
-			}
-		}
-		return closestStation;
-	}
-
-	private BusStopInterface getClosestStop(DirectionsStep currentStep) {
+	private BusStopInterface getClosestStop(DirectionsStep currentStep, String stopType) {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		BusStopInterface closestStop = null;
 		double distance = 1000000;
 		for (BusStopInterface stop : busStopService.getAllStops()) {
-			if (stop.getName() == "Bus stop") {
+			if (stop.getName() == stopType) {
+				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
+						currentStep.startLocation.toString()) < distance) {
+					closestStop = stop;
+					distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
+				}
+			} else if (stop.getName() == stopType) {
 				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
 						currentStep.startLocation.toString()) < distance) {
 					closestStop = stop;
@@ -388,6 +393,10 @@ public class Ez10 implements VehicleInterface {
 			return "Picked up passenger id: " + passenger.getId();
 		}
 		return "No free seats!";
+	}
 
+	@Override
+	public void setRouteResults(DirectionsResult result) {
+		this.directionsOverview = result;
 	}
 }

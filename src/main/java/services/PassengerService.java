@@ -58,7 +58,6 @@ public class PassengerService {
 		} else {
 			waypointCoords = new String[(orderedWaitingPassengersByDistance.size() + passengersOnBoard.size())];
 		}
-
 		int onBoardPointer = 0; 
 		int waitingPassengersPointer = 0;
 		for (int y = 0; y < waypointCoords.length; y++) {

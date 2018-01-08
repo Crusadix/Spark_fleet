@@ -35,7 +35,6 @@ public class BusStop implements BusStopInterface {
 		return currentPassengers;
 	}
 
-
 	@Override
 	public String getLocationCoords() {
 		return locationCoords;

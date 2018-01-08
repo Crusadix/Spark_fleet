@@ -49,7 +49,7 @@ public class Main {
 		busTestService.driveCurrentRoute(1);
 		busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 		*/
-		//busTestService.setRouteWaypointsOnDemand(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
+		busTestService.setRouteWaypointsOnDemand(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 	}
 
 	static int getHerokuAssignedPort() {

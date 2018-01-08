@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
 
@@ -38,6 +39,8 @@ public interface VehicleInterface {
 	int getFreeSeats();
 
 	void addToReservedSeats(PassengerInterface passenger);
+
+	public void setRouteResults(DirectionsResult result);
 
 }
 

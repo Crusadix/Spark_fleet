@@ -80,6 +80,7 @@ public class BusService {
 		}
 		DirectionsResult result = directionsRequest.await();
 		getBus(id).setIntendedRoute(result.routes[0]);
+		getBus(id).setRouteResults(result);
 		return result;
 	}
 	
@@ -95,6 +96,7 @@ public class BusService {
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
 		getBus(id).setIntendedRoute(result.routes[0]);
+		getBus(id).setRouteResults(result);
 		return result;
 	}
 }
