@@ -34,4 +34,10 @@ public class MapsSingletonUtils {
 		return Double.toString(results[0].geometry.location.lat) + ","
 				+ Double.toString(results[0].geometry.location.lng);
 	}
+	
+	public GeocodingResult[] getGeocodeLatLng(String location) throws ApiException, InterruptedException, IOException {
+		GeocodingResult[] results = GeocodingApi.geocode(getGeoApiContext(), location).await();
+		System.out.println(results);
+		return results;
+	}
 }

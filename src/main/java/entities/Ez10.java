@@ -160,7 +160,6 @@ public class Ez10 implements VehicleInterface {
 						for (PassengerInterface passengerOnBoard : passengersOnBoard) {
 							if (passengerOnBoard.getStatus().equals("on board")) {
 								driveRoute = true;
-
 							}
 						}
 					}
@@ -288,7 +287,13 @@ public class Ez10 implements VehicleInterface {
 		}
 		fuelUp();
 		int nOfSteps = stationRoute.size();
+		
+		// Untested
 		for (int x = 0; x < nOfSteps; x++) {
+			LatLng tempStart = stationRoute.peek().endLocation;
+			LatLng tempEnd = stationRoute.peek().startLocation;
+			stationRoute.peek().startLocation = tempStart;
+			stationRoute.peek().startLocation = tempEnd;
 			simulateDriveToNextStep(stationRoute.pop());
 		}
 		System.out.println("Fueled up and returned to origin");
