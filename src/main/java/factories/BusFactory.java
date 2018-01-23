@@ -1,5 +1,9 @@
 package factories;
 
+import java.io.IOException;
+
+import com.google.maps.errors.ApiException;
+
 import entities.Ez10;
 import interfaces.VehicleInterface;
 
@@ -15,7 +19,7 @@ public class BusFactory {
 		return busId;
 	}
 
-	public VehicleInterface getVehicle() {
-		return new Ez10(genId());
+	public VehicleInterface getVehicle(String location) throws ApiException, InterruptedException, IOException {
+		return new Ez10(genId(), location);
 	}
 }

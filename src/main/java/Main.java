@@ -1,6 +1,9 @@
 import static spark.Spark.*;
 import java.io.IOException;
 import com.google.maps.errors.ApiException;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
+
 import controllers.*;
 import services.*;
 import utilities.*;
@@ -24,10 +27,10 @@ public class Main {
 		fleetManagement.addPassengerService("Espoo", passengerTestService);
 		
 		// This block is for testing purposes
-		busTestService.createBus();
-		busTestService.createBus();
-		busTestService.createBus();
-		busTestService.createBus();
+		busTestService.createBus("Siltakuja, Espoo");
+		busTestService.createBus("Siltakuja, Espoo");
+		busTestService.createBus("Siltakuja, Espoo");
+		busTestService.createBus("Siltakuja, Espoo");
 		stopTestService.createBusStop("Nöykkiön kirjasto, Espoo");
 		stopTestService.createBusStop("Rajamäentie, Espoo");
 		stopTestService.createStation("Electric", "Storage hall", "Tuomarila, Espoo");
@@ -41,6 +44,8 @@ public class Main {
 		passengerTestService.createPassenger("Tuomarila, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Tuomarila, Espoo");
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
+		passengerTestService.createPassenger("Herttuantie, Espoo", "Rajamäentie, Espoo");
+		passengerTestService.createPassenger("Karaportti, Espoo", "Rajamäentie, Espoo");
 		/* 
 		stopTestService.getStop(1).addPassenger(passengerTestService.getPassengers(1));
 		stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));
@@ -48,7 +53,9 @@ public class Main {
 		busTestService.setRouteWaypoints(1, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
 		busTestService.driveCurrentRoute(1);
 		busTestService.setRouteWaypoints(2, "Siltakuja 2, Espoo","Rajamäentie, Espoo", "Espoo");
-		*/
+		
+		busTestService.setRouteWaypointsOnDemand(1, "Sunantie, Espoo","Siltakuja, espoo", "Espoo");
+		busTestService.driveCurrentRoute(1,"onDemand"); */
 		
 	}
 

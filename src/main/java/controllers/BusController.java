@@ -15,7 +15,9 @@ public class BusController {
 		post("/buses/:id", (req, res) -> busService.driveCurrentRoute(Integer.valueOf(req.params("id")),
 				req.queryParams("operationType")), JsonUtils.json());
 		
-		put("/buses", (req, res) -> busService.createBus(), JsonUtils.json());
+		put("/buses", (req, res) -> {
+			return busService.createBus(req.queryParams("origin"));
+		}, JsonUtils.json());
 
 		put("/buses/:id", (req, res) -> {
 			String waypoints = req.queryParams("waypoints");

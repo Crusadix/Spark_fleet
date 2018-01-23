@@ -7,6 +7,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 
 public class MapsSingletonUtils {
 
@@ -35,9 +36,8 @@ public class MapsSingletonUtils {
 				+ Double.toString(results[0].geometry.location.lng);
 	}
 	
-	public GeocodingResult[] getGeocodeLatLng(String location) throws ApiException, InterruptedException, IOException {
+	public LatLng getGeocodeLatLng(String location) throws ApiException, InterruptedException, IOException {
 		GeocodingResult[] results = GeocodingApi.geocode(getGeoApiContext(), location).await();
-		System.out.println(results);
-		return results;
+		return results[0].geometry.location;
 	}
 }

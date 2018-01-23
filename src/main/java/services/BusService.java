@@ -37,14 +37,12 @@ public class BusService {
 				return temp;
 			}
 		}
-		System.out.println("Error has occurred in BusService - bus not found"); // Needs implementation of fault
-																				// tolerance - returning null is bad
-																				// practice
+		System.out.println("Error has occurred in BusService - bus not found"); // Needs implementation of fault tolerance - returning null is bad practice
 		return null;
 	}
 
-	public String createBus() {
-		buses.add(busFactory.getVehicle());
+	public String createBus(String location) throws ApiException, InterruptedException, IOException {
+		buses.add(busFactory.getVehicle(location));
 		return "Bus created";
 	}
 
@@ -52,19 +50,25 @@ public class BusService {
 		getBus(id).setOperatingType(operationType);
 		getBus(id).driveRoute();
 		return "Driving bus id: " +id + ", bus as " + operationType; 
-
 	}
 
 	public String setIntendedRoute(int id, String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
 		getBus(id).setIntendedRoute(result.routes[0]);
+		getBus(id).setRouteResults(result);
 		return gson.toJson(result);
 	}
 
 	public DirectionsRoute getRouteLatLon(int id, String originLatLon, String destinationLatLon)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
+		return result.routes[0];
+	}
+	
+	public DirectionsRoute getRouteString(String origin, String destination)
+			throws ApiException, InterruptedException, IOException {
+		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
 		return result.routes[0];
 	}
 
@@ -92,7 +96,7 @@ public class BusService {
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		directionsRequest.origin(origin);
 		directionsRequest.destination(destination);
-		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(busService.getBus(id), mapsUtils.getGeocode(origin))); // where to pick up passengers? -> currently around origin
+		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(busService.getBus(id), mapsUtils.getGeocode(origin), origin, destination)); // where to pick up passengers? -> currently around origin
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
 		getBus(id).setIntendedRoute(result.routes[0]);

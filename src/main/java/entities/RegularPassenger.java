@@ -31,7 +31,7 @@ public class RegularPassenger implements PassengerInterface {
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
 		for (int x = 0; x < (busStopService.getAllStops().size()); x++) {
 			if (distanceUtils.getDistanceMeters(busStopService.getAllStops().get(x).getLocationCoords(),
-					originCoords) < 100) {
+					originCoords) < 50) {
 				busStopService.addPassenger(busStopService.getAllStops().get(x).getId(), this);
 			}
 		}

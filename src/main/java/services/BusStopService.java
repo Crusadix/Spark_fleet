@@ -68,7 +68,7 @@ public class BusStopService {
 	 */
 	public void dropOffPassengers(VehicleInterface vehicle) throws InterruptedException {
 		for (int x = 0; x < (stops.size()); x++) {
-			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 100) {
+			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 50) {
 				System.out.println("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
 				Double timeToWaitAtDestination = 5.00;	//facilitates web-page to wait before asking directions
 				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
@@ -88,7 +88,7 @@ public class BusStopService {
 
 	public void pickUpPassengers(VehicleInterface vehicle) throws InterruptedException {
 		for (BusStopInterface busStop : stops) {
-			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 100) {
+			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 50) {
 				System.out.println("Waiting 5 seconds for passengers to get on.");
 				Double timeToWaitAtDestination = 5.00; //facilitates web-page to wait before asking directions
 				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
@@ -96,7 +96,7 @@ public class BusStopService {
 				List<PassengerInterface> pickingPassangers = new ArrayList<>();
 				for (int y = 0; y < busStop.getPassengersWaiting().size();y++) {
 					for (BusStopInterface endBusStop : stops) {
-						if (distanceUtils.getDistanceMeters(busStop.getPassengersWaiting().get(y).getDestinationCoords(), endBusStop.getLocationCoords()) < 100) {
+						if (distanceUtils.getDistanceMeters(busStop.getPassengersWaiting().get(y).getDestinationCoords(), endBusStop.getLocationCoords()) < 50) {
 							pickingPassangers.add(busStop.getPassengersWaiting().get(y));
 						}
 					}
