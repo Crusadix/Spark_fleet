@@ -48,7 +48,7 @@ public class Ez10 implements VehicleInterface {
 	public Ez10(int id, String location) throws ApiException, InterruptedException, IOException {
 		MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 		this.id = id;
-		setMaxSpeed(1000);
+		setMaxSpeed(200);
 		this.turnAngle = 35;
 		this.width = 200; // CM
 		this.length = 400; // CM
@@ -58,7 +58,7 @@ public class Ez10 implements VehicleInterface {
 		this.operatingFuel = "Electric";
 		this.operatingType = "metro";
 		this.busStatus = "power off";
-		this.keepDrivingCurrentRoute = true;
+		this.keepDrivingCurrentRoute = false;
 		this.locationCoords = mapsUtils.getGeocodeLatLng(location);
 	}
 
@@ -320,7 +320,6 @@ public class Ez10 implements VehicleInterface {
 		}
 		fuelUp();
 		int nOfSteps = stationRoute.size();
-
 		// Untested
 		for (int x = 0; x < nOfSteps; x++) {
 			LatLng tempStart = stationRoute.peek().endLocation;
