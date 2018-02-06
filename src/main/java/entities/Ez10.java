@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
@@ -105,7 +107,7 @@ public class Ez10 implements VehicleInterface {
 		currentRoute = intendedRoute;
 		currentDestination = intendedRoute.get(0).endLocation;
 		if (!currentRoute.get(0).startLocation.toString().equals(locationCoords.toString()) && calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
-			System.out.println("Driving to route");
+			Log.info("Driving to route");
 			currentRouteToLocation(currentRoute.get(0).startLocation);
 		}
 		if (calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
@@ -123,7 +125,7 @@ public class Ez10 implements VehicleInterface {
 			});
 			Flowable<String> runBackground = source.subscribeOn(Schedulers.io());
 			Flowable<String> showForeground = runBackground.observeOn(Schedulers.single());
-			showForeground.subscribe(System.out::println, Throwable::printStackTrace);
+			showForeground.subscribe(Log::info, Throwable::printStackTrace);
 		} else {
 			visitClosestStationFuelUp();
 			driveRoute();
@@ -134,14 +136,14 @@ public class Ez10 implements VehicleInterface {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		currentRoute = new ArrayList<>();
-		for (DirectionsLeg leg : busService.getRouteLatLon(this.id, this.getLocationCoords(),
+		for (DirectionsLeg leg : busService.getRouteLatLon(this.getLocationCoords(),
 				locationCoords.toString()).legs) {
 			for (DirectionsStep step : leg.steps) {
 				currentRoute.add(step);
 			}
 		}
 		driveToRoute();
-		System.out.println("Reached route starting point");
+		Log.info("Reached route starting point");
 		currentRoute = intendedRoute;
 	}
 
@@ -305,11 +307,11 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	private void visitClosestStationFuelUp() throws ApiException, InterruptedException, IOException {
-		System.out.println("Needs to charge, moving to station, charging and returning.");
+		Log.info("Needs to charge, moving to station, charging and returning.");
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		Stack<DirectionsStep> stationRoute = new Stack<>();
-		for (DirectionsLeg leg : busService.getRouteLatLon(this.id, this.getLocationCoords(),
+		for (DirectionsLeg leg : busService.getRouteLatLon(this.getLocationCoords(),
 				this.getClosestStop(intendedRoute.get(0), "Station").getLocationCoords()).legs) {
 			for (DirectionsStep step : leg.steps) {
 				stationRoute.add(step);
@@ -328,14 +330,14 @@ public class Ez10 implements VehicleInterface {
 			stationRoute.peek().startLocation = tempEnd;
 			simulateDriveToNextStep(stationRoute.pop());
 		}
-		System.out.println("Fueled up and returned to origin");
+		Log.info("Fueled up and returned to origin");
 	}
 
 	@Override
 	public void fuelUp() throws InterruptedException {
 		Thread.sleep(5000); // actual charging takes about 7 hours
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
-		System.out.println("Vehicle fueled up");
+		
 	}
 
 	private void simulateDriveToNextStep(DirectionsStep currentStep) throws InterruptedException {
@@ -345,7 +347,7 @@ public class Ez10 implements VehicleInterface {
 		timeToCurrentDestination = currentStep.distance.inMeters / maxSpeedMeters; // seconds
 		destinationUpdateTimeStamp = System.currentTimeMillis();
 		nearbyPassengers = new ArrayList<>();
-		System.out.println("Bus id: " + this.getId() + ", currently at: " + getLocationCoords() + ", next stop at "
+		Log.info("Bus id: " + this.getId() + ", currently at: " + getLocationCoords() + ", next stop at "
 				+ currentStep.endLocation.toString() + " moving will take " + timeToMove + " seconds");
 		Thread.sleep((long) timeToMove * 1000);
 		range = (long) (range - distanceToTravel);
@@ -418,7 +420,7 @@ public class Ez10 implements VehicleInterface {
 	public void dropPassenger(PassengerInterface passenger) {
 		passengersOnBoard.remove(passenger);
 		passenger.setStatus("delivered");
-		System.out.println("Dropped passanger id: " + passenger.getId());
+		Log.info("Dropped passanger id: " + passenger.getId());
 	}
 
 	@Override

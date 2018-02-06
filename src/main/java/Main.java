@@ -1,8 +1,6 @@
 import static spark.Spark.*;
 import java.io.IOException;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.LatLng;
 
 import controllers.*;
 import services.*;
@@ -46,6 +44,7 @@ public class Main {
 		passengerTestService.createPassenger("Vuoriharjuntie 19, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Herttuantie, Espoo", "Rajamäentie, Espoo");
 		passengerTestService.createPassenger("Karaportti, Espoo", "Rajamäentie, Espoo");
+		
 		/* 
 		stopTestService.getStop(1).addPassenger(passengerTestService.getPassengers(1));
 		stopTestService.getStop(2).addPassenger(passengerTestService.getPassengers(2));

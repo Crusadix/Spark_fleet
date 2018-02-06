@@ -3,6 +3,8 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
 import utilities.*;
 import factories.StopFactory;
@@ -18,13 +20,13 @@ public class BusStopService {
 		return stops;
 	}
 
-	public BusStopInterface getStop(int id) {
-		for (BusStopInterface temp : stops) {
-			if (temp.getId() == id) {
-				return temp;
+	public BusStopInterface getStop(int stopId) {
+		for (BusStopInterface tempStop : stops) {
+			if (tempStop.getId() == stopId) {
+				return tempStop;
 			}
 		}
-		System.out.println("Stop not found - BusStopService");
+		Log.error("Stop not found - BusStopService");
 		return null; //bad practice
 	}
 
@@ -48,14 +50,16 @@ public class BusStopService {
 		return coords;
 	}
 
-	public String createStation(String fuelType, String storageType, String location) throws ApiException, InterruptedException, IOException {
-		stops.add(stopFactory.getStop(fuelType, storageType, location));
-		return "Station created";
+	public BusStopInterface createStation(String fuelType, String storageType, String location) throws ApiException, InterruptedException, IOException {
+		BusStopInterface newStop = stopFactory.getStop(fuelType, storageType, location);
+		stops.add(newStop);
+		return newStop;
 	}
 
-	public String createBusStop(String location) throws ApiException, InterruptedException, IOException {
-		stops.add(stopFactory.getStop(location));
-		return "BusStop created";
+	public BusStopInterface createBusStop(String location) throws ApiException, InterruptedException, IOException {
+		BusStopInterface newStop = stopFactory.getStop(location);
+		stops.add(newStop);
+		return newStop;
 	}
 
 	public void addPassenger(int stopId, PassengerInterface passenger) {
@@ -69,7 +73,7 @@ public class BusStopService {
 	public void dropOffPassengers(VehicleInterface vehicle) throws InterruptedException {
 		for (int x = 0; x < (stops.size()); x++) {
 			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 50) {
-				System.out.println("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
+				Log.info("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
 				Double timeToWaitAtDestination = 5.00;	//facilitates web-page to wait before asking directions
 				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
 				Thread.sleep(5000);
@@ -89,7 +93,7 @@ public class BusStopService {
 	public void pickUpPassengers(VehicleInterface vehicle) throws InterruptedException {
 		for (BusStopInterface busStop : stops) {
 			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 50) {
-				System.out.println("Waiting 5 seconds for passengers to get on.");
+				Log.info("Waiting 5 seconds for passengers to get on.");
 				Double timeToWaitAtDestination = 5.00; //facilitates web-page to wait before asking directions
 				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
 				Thread.sleep(5000);

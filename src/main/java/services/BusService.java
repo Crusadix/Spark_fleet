@@ -3,6 +3,8 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.esotericsoftware.minlog.Log;
 import com.google.gson.Gson;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -27,52 +29,53 @@ public class BusService {
 		return buses;
 	}
 
-	public List<DirectionsStep> getRoute(int id) {
-		return getBus(id).getRoute();
+	public List<DirectionsStep> getRoute(int busId) {
+		return getBus(busId).getRoute();
 	}
 
-	public VehicleInterface getBus(int id) {
-		for (VehicleInterface temp : buses) {
-			if (temp.getId() == id) {
-				return temp;
+	public VehicleInterface getBus(int busId) {
+		for (VehicleInterface tempBus : buses) {
+			if (tempBus.getId() == busId) {
+				return tempBus;
 			}
 		}
-		System.out.println("Error has occurred in BusService - bus not found"); // Needs implementation of fault tolerance - returning null is bad practice
+		Log.error("Error has occurred in BusService - bus not found"); // Needs implementation of fault tolerance - returning null is bad practice
 		return null;
 	}
 
-	public String createBus(String location) throws ApiException, InterruptedException, IOException {
-		buses.add(busFactory.getVehicle(location));
-		return "Bus created";
+	public VehicleInterface createBus(String location) throws ApiException, InterruptedException, IOException {
+		VehicleInterface newVehicle = busFactory.getVehicle(location);
+		buses.add(newVehicle);
+		return newVehicle;
 	}
 
-	public String driveCurrentRoute(int id, String operationType) throws ApiException, InterruptedException, IOException {
+	public boolean driveCurrentRoute(int id, String operationType) throws ApiException, InterruptedException, IOException {
 		getBus(id).setOperatingType(operationType);
-		getBus(id).driveRoute();
-		return "Driving bus id: " +id + ", bus as " + operationType; 
+		getBus(id).driveRoute(); 
+		return true;
 	}
 
-	public String setIntendedRoute(int id, String origin, String destination)
+	public boolean setIntendedRoute(int id, String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
 		getBus(id).setIntendedRoute(result.routes[0]);
 		getBus(id).setRouteResults(result);
-		return gson.toJson(result);
+		return true;
 	}
 
-	public DirectionsRoute getRouteLatLon(int id, String originLatLon, String destinationLatLon)
+	public DirectionsRoute getRouteLatLon(String originLatLon, String destinationLatLon)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
-		return result.routes[0];
+		return result.routes[0];  // the first route of the list is the "shortest" current one from the google responses
 	}
 	
 	public DirectionsRoute getRouteString(String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
-		return result.routes[0];
+		return result.routes[0]; // the first route of the list is the "shortest" current one from the google responses
 	}
 
-	public DirectionsResult setRouteWaypoints(int id, String origin, String destination, String waypoints, String zone)
+	public DirectionsResult setRouteWaypoints(int busId, String origin, String destination, String waypoints, String zone)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
 		BusStopService busStopService = fleetManagement.getBusStopServices().get("Espoo");
@@ -83,12 +86,12 @@ public class BusService {
 			directionsRequest.optimizeWaypoints(true);
 		}
 		DirectionsResult result = directionsRequest.await();
-		getBus(id).setIntendedRoute(result.routes[0]);
-		getBus(id).setRouteResults(result);
+		getBus(busId).setIntendedRoute(result.routes[0]);
+		getBus(busId).setRouteResults(result);
 		return result;
 	}
 	
-	public DirectionsResult setRouteWaypointsOnDemand(int id, String origin, String destination, String zone)
+	public DirectionsResult setRouteWaypointsOnDemand(int busId, String origin, String destination, String zone)
 			throws ApiException, InterruptedException, IOException {
 		MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 		DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
@@ -96,11 +99,11 @@ public class BusService {
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		directionsRequest.origin(origin);
 		directionsRequest.destination(destination);
-		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(busService.getBus(id), mapsUtils.getGeocode(origin), origin, destination)); // where to pick up passengers? -> currently around origin
+		directionsRequest.waypoints(passengerService.buildPassengerWaypoints(busService.getBus(busId), mapsUtils.getGeocode(origin), origin, destination));
 		directionsRequest.optimizeWaypoints(true);
 		DirectionsResult result = directionsRequest.await();
-		getBus(id).setIntendedRoute(result.routes[0]);
-		getBus(id).setRouteResults(result);
+		getBus(busId).setIntendedRoute(result.routes[0]);
+		getBus(busId).setRouteResults(result);
 		return result;
 	}
 }

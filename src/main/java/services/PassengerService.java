@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
@@ -35,20 +36,21 @@ public class PassengerService {
 				return temp;
 			}
 		}
-		System.out.println("Passenger not found - PassengerService");
+		Log.error("Passenger not found - PassengerService");
 		return null;
 	}
 
-	public String createPassenger(String origin, String destination)
+	public PassengerInterface createPassenger(String origin, String destination)
 			throws ApiException, InterruptedException, IOException {
-		passengers.add(passengerFactory.getPassenger(origin, destination));
-		return "Passenger created";
+		PassengerInterface newPassenger = passengerFactory.getPassenger(origin, destination);
+		passengers.add(newPassenger);
+		return newPassenger;
 	}
 
-	public String moveToBusStop(int passengerId, int stopId) {
+	public PassengerInterface moveToBusStop(int passengerId, int stopId) {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		fleetManagement.getBusStopServices().get("Espoo").addPassenger(stopId, getPassenger(passengerId));
-		return "Success";
+		return getPassenger(passengerId);
 	}
 
 	// make a list of buses' passengers' destinations and nearby passengers'
@@ -111,7 +113,6 @@ public class PassengerService {
 		for (int x = 0; x < waitingPassengers.size(); x++) {
 			min = Collections.min(passengersByDistance.entrySet(), Comparator.comparingDouble(Entry::getValue));
 			if (min.getValue() < 1500) {
-				//System.out.println(min.getKey() + " " + min.getValue());
 				orderedWaitingPassengersByDistance.add(getPassenger(min.getKey()));
 			}
 			passengersByDistance.remove(min.getKey());
