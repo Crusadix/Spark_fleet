@@ -3,7 +3,6 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.esotericsoftware.minlog.Log;
 import com.google.gson.Gson;
 import com.google.maps.DirectionsApi;
@@ -29,18 +28,13 @@ public class BusService {
 		return buses;
 	}
 
-	public List<DirectionsStep> getRoute(int busId) {
-		return getBus(busId).getRoute();
-	}
-
 	public VehicleInterface getBus(int busId) {
 		for (VehicleInterface tempBus : buses) {
 			if (tempBus.getId() == busId) {
 				return tempBus;
 			}
 		}
-		Log.error("Error has occurred in BusService - bus not found"); // Needs implementation of fault tolerance - returning null is bad practice
-		return null;
+		throw new IllegalArgumentException("Error has occurred in BusService - bus not found");
 	}
 
 	public VehicleInterface createBus(String location) throws ApiException, InterruptedException, IOException {
@@ -55,24 +49,10 @@ public class BusService {
 		return true;
 	}
 
-	public boolean setIntendedRoute(int id, String origin, String destination)
-			throws ApiException, InterruptedException, IOException {
-		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
-		getBus(id).setIntendedRoute(result.routes[0]);
-		getBus(id).setRouteResults(result);
-		return true;
-	}
-
-	public DirectionsRoute getRouteLatLon(String originLatLon, String destinationLatLon)
+	public DirectionsRoute getRouteSimple(String originLatLon, String destinationLatLon)
 			throws ApiException, InterruptedException, IOException {
 		DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
 		return result.routes[0];  // the first route of the list is the "shortest" current one from the google responses
-	}
-	
-	public DirectionsRoute getRouteString(String origin, String destination)
-			throws ApiException, InterruptedException, IOException {
-		DirectionsResult result = DirectionsApi.getDirections(context, origin, destination).await();
-		return result.routes[0]; // the first route of the list is the "shortest" current one from the google responses
 	}
 
 	public DirectionsResult setRouteWaypoints(int busId, String origin, String destination, String waypoints, String zone)

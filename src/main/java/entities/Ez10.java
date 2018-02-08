@@ -136,8 +136,8 @@ public class Ez10 implements VehicleInterface {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		currentRoute = new ArrayList<>();
-		for (DirectionsLeg leg : busService.getRouteLatLon(this.getLocationCoords(),
-				locationCoords.toString()).legs) {
+		DirectionsRoute simpleRoute = busService.getRouteSimple(this.getLocationCoords(), locationCoords.toString());
+		for (DirectionsLeg leg : simpleRoute.legs) {
 			for (DirectionsStep step : leg.steps) {
 				currentRoute.add(step);
 			}
@@ -311,7 +311,7 @@ public class Ez10 implements VehicleInterface {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		Stack<DirectionsStep> stationRoute = new Stack<>();
-		for (DirectionsLeg leg : busService.getRouteLatLon(this.getLocationCoords(),
+		for (DirectionsLeg leg : busService.getRouteSimple(this.getLocationCoords(),
 				this.getClosestStop(intendedRoute.get(0), "Station").getLocationCoords()).legs) {
 			for (DirectionsStep step : leg.steps) {
 				stationRoute.add(step);
@@ -424,14 +424,15 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	@Override
-	public String pickPassenger(PassengerInterface passenger) {
+	public boolean pickPassenger(PassengerInterface passenger) {
 		if ((!passengersOnBoard.contains(passenger)) && (getFreeSeats() > 0) || reservedSeats.contains(passenger)) {
 			passengersOnBoard.add(passenger);
 			passenger.setCurrentCoords("");
 			passenger.setStatus("on board");
-			return "Picked up passenger id: " + passenger.getId();
+			Log.info("Picked passanger id: " + passenger.getId());
+			return true;
 		}
-		return "No free seats!";
+		return false;
 	}
 
 	@Override

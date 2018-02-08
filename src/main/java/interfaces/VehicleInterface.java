@@ -26,7 +26,7 @@ public interface VehicleInterface {
 
 	public String getLocationCoords();
 
-	public String pickPassenger(PassengerInterface passenger);
+	public boolean pickPassenger(PassengerInterface passenger);
 
 	void setKeepDrivingCurrentRoute(boolean driveOption);
 	
@@ -43,5 +43,3 @@ public interface VehicleInterface {
 	public void setRouteResults(DirectionsResult result);
 
 }
-
-//Vehicle ez10 = BusFactory.createEasymileBus();

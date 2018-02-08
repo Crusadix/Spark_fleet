@@ -3,7 +3,6 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
 import utilities.*;
@@ -26,13 +25,9 @@ public class BusStopService {
 				return tempStop;
 			}
 		}
-		Log.error("Stop not found - BusStopService");
-		return null; //bad practice
+		throw new IllegalArgumentException("Stop not found - BusStopService");
 	}
 
-	/*
-	 * Optimistic - if not found, return faulty list
-	 */
 	public String[] buildWaypoints(String waypoints) {
 		if (waypoints.length() < 2) {
 			String[] coords = {getStop(Integer.parseInt(waypoints)).getLocationCoords()};

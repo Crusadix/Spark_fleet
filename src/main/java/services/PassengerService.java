@@ -5,17 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
 import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
-
 import factories.PassengerFactory;
 import interfaces.*;
 import utilities.*;
@@ -30,14 +25,13 @@ public class PassengerService {
 		return passengers;
 	}
 
-	public PassengerInterface getPassenger(int id) {
-		for (PassengerInterface temp : passengers) {
-			if (temp.getId() == id) {
-				return temp;
+	public PassengerInterface getPassenger(int passengerId) {
+		for (PassengerInterface tempPassenger : passengers) {
+			if (tempPassenger.getId() == passengerId) {
+				return tempPassenger;
 			}
 		}
-		Log.error("Passenger not found - PassengerService");
-		return null;
+		throw new IllegalArgumentException("Passenger not found - PassengerService");
 	}
 
 	public PassengerInterface createPassenger(String origin, String destination)
@@ -88,11 +82,12 @@ public class PassengerService {
 		return waypointCoords;
 	}
 
+	// Make a simple route based on the original origin and destination, and order the list of current passengers waiting by their range to the route
 	private List<PassengerInterface> orderByDistance(List<PassengerInterface> waitingPassengers, String origin,
 			String destination) throws ApiException, InterruptedException, IOException {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
-		DirectionsRoute routeWithoutPassengers = busService.getRouteString(origin, destination);
+		DirectionsRoute routeWithoutPassengers = busService.getRouteSimple(origin, destination);
 		HashMap<Integer, Integer> passengersByDistance = new HashMap<>();
 		for (DirectionsStep step : routeWithoutPassengers.legs[0].steps) {
 			for (int x = 0; x < waitingPassengers.size(); x++) {
