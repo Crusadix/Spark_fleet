@@ -1,8 +1,8 @@
 import static spark.Spark.*;
 import java.io.IOException;
 import com.google.maps.errors.ApiException;
-
 import controllers.*;
+import factories.ServiceFactory;
 import services.*;
 import utilities.*;
 
@@ -13,9 +13,12 @@ public class Main {
 		port(getHerokuAssignedPort());
 		
 		FleetManager fleetManagement = FleetManager.getInstance();
-		BusService busTestService = new BusService();
-		BusStopService stopTestService = new BusStopService();
-		PassengerService passengerTestService = new PassengerService();
+		
+		ServiceFactory serviceFactory = new ServiceFactory();
+		
+		BusStopService stopTestService = serviceFactory.getStopService();
+		PassengerService passengerTestService = serviceFactory.getPassengerService();
+		BusService busTestService = serviceFactory.getBusService();
 		
 		new BusStopController(stopTestService);
 		new BusController(busTestService);

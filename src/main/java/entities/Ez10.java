@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
 import com.esotericsoftware.minlog.Log;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsLeg;
@@ -311,8 +310,8 @@ public class Ez10 implements VehicleInterface {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		Stack<DirectionsStep> stationRoute = new Stack<>();
-		for (DirectionsLeg leg : busService.getRouteSimple(this.getLocationCoords(),
-				this.getClosestStop(intendedRoute.get(0), "Station").getLocationCoords()).legs) {
+		DirectionsLeg[] simpleRoute =  busService.getRouteSimple(this.getLocationCoords(),this.getClosestStop(intendedRoute.get(0), "Station").getLocationCoords()).legs;
+		for (DirectionsLeg leg : simpleRoute) {
 			for (DirectionsStep step : leg.steps) {
 				stationRoute.add(step);
 			}
@@ -337,7 +336,6 @@ public class Ez10 implements VehicleInterface {
 	public void fuelUp() throws InterruptedException {
 		Thread.sleep(5000); // actual charging takes about 7 hours
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
-		
 	}
 
 	private void simulateDriveToNextStep(DirectionsStep currentStep) throws InterruptedException {
