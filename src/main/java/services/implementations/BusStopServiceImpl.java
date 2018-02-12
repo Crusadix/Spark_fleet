@@ -73,13 +73,10 @@ public class BusStopServiceImpl implements BusStopService{
 	 * close to the stops close-by. 
 	 */
 	@Override
-	public void dropOffPassengers(VehicleInterface vehicle) throws InterruptedException {
+	public void dropOffPassengers(VehicleInterface vehicle) {
 		for (int x = 0; x < (stops.size()); x++) {
 			if (distanceUtils.getDistanceMeters(stops.get(x).getLocationCoords(), vehicle.getLocationCoords()) < 50) {
-				Log.info("Arrived at " + vehicle.getLocationCoords() + ". Waiting 5 seconds for passengers to get off.");
-				Double timeToWaitAtDestination = 5.00;	//facilitates web-page to wait before asking directions
-				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
-				Thread.sleep(5000);
+				Log.info("Arrived at " + vehicle.getLocationCoords());
 				List<PassengerInterface> droppingPassangers = new ArrayList<>();
 				for (PassengerInterface tempPassenger : vehicle.getPassengersOnBoard()) {
 					if (distanceUtils.getDistanceMeters(tempPassenger.getDestinationCoords(), vehicle.getLocationCoords()) < 50) {
@@ -94,13 +91,10 @@ public class BusStopServiceImpl implements BusStopService{
 	}
 
 	@Override
-	public void pickUpPassengers(VehicleInterface vehicle) throws InterruptedException {
+	public void pickUpPassengers(VehicleInterface vehicle) {
 		for (BusStopInterface busStop : stops) {
 			if (distanceUtils.getDistanceMeters(busStop.getLocationCoords(), vehicle.getLocationCoords()) < 50) {
-				Log.info("Waiting 5 seconds for passengers to get on.");
-				Double timeToWaitAtDestination = 5.00; //facilitates web-page to wait before asking directions
-				vehicle.setTimeToCurrentDestination(timeToWaitAtDestination);
-				Thread.sleep(5000);
+				Log.info("Passengers taken onboard");
 				List<PassengerInterface> pickingPassangers = new ArrayList<>();
 				for (int y = 0; y < busStop.getPassengersWaiting().size();y++) {
 					for (BusStopInterface endBusStop : stops) {

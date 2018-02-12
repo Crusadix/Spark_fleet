@@ -54,6 +54,7 @@ public class BusServiceImpl implements BusService{
 			return true;
 		}
 
+		@Override
 		public DirectionsRoute getRouteSimple(String originLatLon, String destinationLatLon)
 				throws ApiException, InterruptedException, IOException {
 			DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
@@ -77,6 +78,7 @@ public class BusServiceImpl implements BusService{
 			return result;
 		}
 		
+		@Override
 		public DirectionsResult setRouteWaypointsOnDemand(int busId, String origin, String destination, String zone)
 				throws ApiException, InterruptedException, IOException {
 			MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();

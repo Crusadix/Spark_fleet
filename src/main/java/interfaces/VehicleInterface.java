@@ -10,7 +10,7 @@ import com.google.maps.model.DirectionsStep;
 
 public interface VehicleInterface {
 
-	public void fuelUp() throws InterruptedException;
+	public double fuelUp() throws InterruptedException;
 
 	public void setIntendedRoute(DirectionsRoute route);
 

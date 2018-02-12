@@ -11,6 +11,8 @@ public interface PassengerService {
 			String destination) throws ApiException, InterruptedException, IOException;
 
 	List<PassengerInterface> getAllPassengers();
+	
+	PassengerInterface getPassenger(int passengerId);
 
 	PassengerInterface createPassenger(String origin, String destination) throws ApiException, InterruptedException, IOException;
 

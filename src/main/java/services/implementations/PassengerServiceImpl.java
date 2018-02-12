@@ -26,6 +26,7 @@ public class PassengerServiceImpl implements PassengerService {
 		return passengers;
 	}
 
+	@Override
 	public PassengerInterface getPassenger(int passengerId) {
 		for (PassengerInterface tempPassenger : passengers) {
 			if (tempPassenger.getId() == passengerId) {

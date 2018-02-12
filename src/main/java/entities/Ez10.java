@@ -102,12 +102,13 @@ public class Ez10 implements VehicleInterface {
 	 * MESSY
 	 */
 	@Override
-	public void driveRoute() throws InterruptedException, ApiException, IOException {
+	public void driveRoute()  {
+		try {
 		currentRoute = intendedRoute;
 		currentDestination = intendedRoute.get(0).endLocation;
 		if (!currentRoute.get(0).startLocation.toString().equals(locationCoords.toString()) && calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
 			Log.info("Driving to route");
-			currentRouteToLocation(currentRoute.get(0).startLocation);
+				currentRouteToLocation(currentRoute.get(0).startLocation);
 		}
 		if (calculateRouteLeft(currentRoute.get(0)) < (range * 0.9)) {
 			Flowable<String> source = Flowable.fromCallable(() -> {
@@ -128,6 +129,13 @@ public class Ez10 implements VehicleInterface {
 		} else {
 			visitClosestStationFuelUp();
 			driveRoute();
+		}
+		} catch (ApiException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -333,9 +341,10 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	@Override
-	public void fuelUp() throws InterruptedException {
+	public double fuelUp() throws InterruptedException {
 		Thread.sleep(5000); // actual charging takes about 7 hours
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
+		return this.range;
 	}
 
 	private void simulateDriveToNextStep(DirectionsStep currentStep) throws InterruptedException {
