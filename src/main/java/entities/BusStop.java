@@ -2,6 +2,9 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.maps.model.LatLng;
+
 import interfaces.*;
 
 public class BusStop implements BusStopInterface {
@@ -9,10 +12,10 @@ public class BusStop implements BusStopInterface {
 	private String name = "Bus stop";
 	private int id;
 	private String location;
-	private String locationCoords;
+	private LatLng locationCoords;
 	private List<PassengerInterface> currentPassengers = new ArrayList<>();
 
-	public BusStop(int id, String location, String locationCoords) {
+	public BusStop(int id, String location, LatLng locationCoords) {
 		this.id = id;
 		this.location = location;
 		this.locationCoords = locationCoords;
@@ -36,7 +39,7 @@ public class BusStop implements BusStopInterface {
 	}
 
 	@Override
-	public String getLocationCoords() {
+	public LatLng getLocationCoords() {
 		return locationCoords;
 	}
 	@Override

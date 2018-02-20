@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
+import com.google.maps.model.LatLng;
 import factories.*;
 import interfaces.*;
 import services.*;
@@ -54,7 +55,7 @@ public class PassengerServiceImpl implements PassengerService {
 	// make a list of buses' passengers' destinations and nearby passengers'
 	// coordinates and return it
 	@Override
-	public String[] buildPassengerWaypoints(VehicleInterface vehicle, String locationCoords, String origin,
+	public String[] buildPassengerWaypoints(VehicleInterface vehicle, String origin,
 			String destination) throws ApiException, InterruptedException, IOException {
 		String[] waypointCoords;
 		List<PassengerInterface> orderedWaitingPassengersByDistance = new ArrayList<>();
@@ -74,12 +75,12 @@ public class PassengerServiceImpl implements PassengerService {
 		int waitingPassengersPointer = 0;
 		for (int y = 0; y < waypointCoords.length; y++) {
 			if (onBoardPointer < passengersOnBoard.size() && vehicle.getFreeSeats() > 0) {
-				waypointCoords[y] = passengersOnBoard.get(onBoardPointer).getDestinationCoords();
+				waypointCoords[y] = passengersOnBoard.get(onBoardPointer).getDestinationCoords().toString();
 				onBoardPointer++;
 			} else if (waitingPassengersPointer < orderedWaitingPassengersByDistance.size()
 					&& vehicle.getFreeSeats() > 0) {
 				vehicle.addToReservedSeats(orderedWaitingPassengersByDistance.get(waitingPassengersPointer));
-				waypointCoords[y] = orderedWaitingPassengersByDistance.get(waitingPassengersPointer).getCurrentCoords();
+				waypointCoords[y] = orderedWaitingPassengersByDistance.get(waitingPassengersPointer).getCurrentCoords().toString();
 				orderedWaitingPassengersByDistance.get(waitingPassengersPointer).setStatus("bus on route");
 				waitingPassengersPointer++;
 			}
@@ -90,14 +91,15 @@ public class PassengerServiceImpl implements PassengerService {
 	// Make a simple route based on the original origin and destination, and order the list of current passengers waiting by their range to the route
 	private List<PassengerInterface> orderByDistance(List<PassengerInterface> waitingPassengers, String origin,
 			String destination) throws ApiException, InterruptedException, IOException {
+		MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
-		DirectionsRoute routeWithoutPassengers = busService.getRouteSimple(origin, destination);
+		DirectionsRoute routeWithoutPassengers = busService.getRouteSimple(mapsUtils.getGeocodeLatLng(origin), mapsUtils.getGeocodeLatLng(destination));
 		HashMap<Integer, Integer> passengersByDistance = new HashMap<>();
 		for (DirectionsStep step : routeWithoutPassengers.legs[0].steps) {
 			for (int x = 0; x < waitingPassengers.size(); x++) {
 				PassengerInterface tempPassenger = waitingPassengers.get(x);
-				double distanceDouble = distanceUtils.getDistanceMeters(step.startLocation.toString(),
+				double distanceDouble = distanceUtils.getDistanceMeters(step.startLocation,
 						tempPassenger.getCurrentCoords());
 				Long L = Math.round(distanceDouble);
 				int i = Integer.valueOf(L.intValue());

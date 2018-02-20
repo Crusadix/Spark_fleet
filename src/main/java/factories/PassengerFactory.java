@@ -17,7 +17,8 @@ public class PassengerFactory {
 	}
 	
 	public PassengerInterface getPassenger(String origin, String destination) throws ApiException, InterruptedException, IOException {
-		return new RegularPassenger(genId(), origin, destination, mapsUtils.getGeocode(origin),mapsUtils.getGeocode(destination));
+		
+		return new RegularPassenger(genId(), origin, destination, mapsUtils.getGeocodeLatLng(origin),mapsUtils.getGeocodeLatLng(destination));
 	}
 	
 }

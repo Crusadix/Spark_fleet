@@ -34,7 +34,7 @@ public class BusStopServiceImpl implements BusStopService{
 	@Override
 	public String[] buildWaypoints(String waypoints) {
 		if (waypoints.length() < 2) {
-			String[] coords = {getStop(Integer.parseInt(waypoints)).getLocationCoords()};
+			String[] coords = {getStop(Integer.parseInt(waypoints)).getLocationCoords().toString()};
 			return coords;
 		}
 		String[] parts = waypoints.split(",");
@@ -42,7 +42,7 @@ public class BusStopServiceImpl implements BusStopService{
 		for (int y = 0; y < parts.length; y++) {
 			for (int x = 0; x < stops.size(); x++) {
 				if (Integer.parseInt(parts[y]) == stops.get(x).getId()) {
-					coords[y] = (stops.get(x).getLocationCoords());
+					coords[y] = (stops.get(x).getLocationCoords().toString());
 				}
 			}
 		}

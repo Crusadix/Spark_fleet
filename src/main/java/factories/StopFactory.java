@@ -18,11 +18,11 @@ public class StopFactory {
 	}
 	
 	public BusStopInterface getStop(String fuelType, String storageType, String location) throws ApiException, InterruptedException, IOException {
-		return new Station(genId(), fuelType, storageType, location, mapsUtils.getGeocode(location));
+		return new Station(genId(), fuelType, storageType, location, mapsUtils.getGeocodeLatLng(location));
 	}
 	
 	public BusStopInterface getStop(String location) throws ApiException, InterruptedException, IOException {
-		return new BusStop(genId(), location, mapsUtils.getGeocode(location));
+		return new BusStop(genId(), location, mapsUtils.getGeocodeLatLng(location));
 	}
 	
 }

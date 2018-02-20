@@ -10,6 +10,8 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.LatLng;
+
 import factories.*;
 import interfaces.*;
 import services.*;
@@ -55,9 +57,9 @@ public class BusServiceImpl implements BusService{
 		}
 
 		@Override
-		public DirectionsRoute getRouteSimple(String originLatLon, String destinationLatLon)
+		public DirectionsRoute getRouteSimple(LatLng originLatLon, LatLng destinationLatLon)
 				throws ApiException, InterruptedException, IOException {
-			DirectionsResult result = DirectionsApi.getDirections(context, originLatLon, destinationLatLon).await();
+			DirectionsResult result = DirectionsApi.getDirections(context, originLatLon.toString(), destinationLatLon.toString()).await();
 			return result.routes[0];  // the first route of the list is the "shortest" current one from the google responses
 		}
 
@@ -81,12 +83,11 @@ public class BusServiceImpl implements BusService{
 		@Override
 		public DirectionsResult setRouteWaypointsOnDemand(int busId, String origin, String destination, String zone)
 				throws ApiException, InterruptedException, IOException {
-			MapsSingletonUtils mapsUtils = MapsSingletonUtils.getInstance();
 			DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
 			PassengerService passengerService = fleetManagement.getPassengerServices().get("Espoo");
 			directionsRequest.origin(origin);
 			directionsRequest.destination(destination);
-			directionsRequest.waypoints(passengerService.buildPassengerWaypoints(getBus(busId), mapsUtils.getGeocode(origin), origin, destination));
+			directionsRequest.waypoints(passengerService.buildPassengerWaypoints(getBus(busId), origin, destination));
 			directionsRequest.optimizeWaypoints(true);
 			DirectionsResult result = directionsRequest.await();
 			getBus(busId).setIntendedRoute(result.routes[0]);

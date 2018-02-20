@@ -30,12 +30,6 @@ public class MapsSingletonUtils {
 		return gson;
 	}
 
-	public String getGeocode(String location) throws ApiException, InterruptedException, IOException {
-		GeocodingResult[] results = GeocodingApi.geocode(getGeoApiContext(), location).await();
-		return Double.toString(results[0].geometry.location.lat) + ","
-				+ Double.toString(results[0].geometry.location.lng);
-	}
-	
 	public LatLng getGeocodeLatLng(String location) throws ApiException, InterruptedException, IOException {
 		GeocodingResult[] results = GeocodingApi.geocode(getGeoApiContext(), location).await();
 		return results[0].geometry.location;

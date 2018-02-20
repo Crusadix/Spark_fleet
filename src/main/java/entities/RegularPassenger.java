@@ -1,5 +1,7 @@
 package entities;
 
+import com.google.maps.model.LatLng;
+
 import interfaces.*;
 import services.*;
 import utilities.*;
@@ -9,12 +11,12 @@ public class RegularPassenger implements PassengerInterface {
 	private int id;
 	private String origin;
 	private String destination;
-	private String originCoords;
-	private String destinationCoords;
+	private LatLng originCoords;
+	private LatLng destinationCoords;
 	private String status;
-	private String currentCoords;
+	private LatLng currentCoords;
 
-	public RegularPassenger(int id, String origin, String destination, String originCoords, String destinationCoords) {
+	public RegularPassenger(int id, String origin, String destination, LatLng originCoords, LatLng destinationCoords) {
 		this.id = id;
 		this.origin = origin;
 		this.destination = destination;
@@ -38,22 +40,22 @@ public class RegularPassenger implements PassengerInterface {
 	}
 	
 	@Override
-	public void setCurrentCoords(String currentCoords) {
+	public void setCurrentCoords(LatLng currentCoords) {
 		this.currentCoords = currentCoords;
 	}
 	
 	@Override
-	public String getCurrentCoords() {
+	public LatLng getCurrentCoords() {
 		return currentCoords;
 	}
 	
 	@Override
-	public String getOriginCoords() {
+	public LatLng getOriginCoords() {
 		return originCoords;
 	}
 	
 	@Override
-	public String getDestinationCoords() {
+	public LatLng getDestinationCoords() {
 		return destinationCoords;
 	}
 

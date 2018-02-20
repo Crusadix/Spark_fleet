@@ -68,7 +68,6 @@ public class Ez10 implements VehicleInterface {
 		this.operatingType = operatingType;
 	}
 
-	@Override
 	public void setTimeToCurrentDestination(double timeToCurrentDestination) {
 		this.timeToCurrentDestination = timeToCurrentDestination;
 		destinationUpdateTimeStamp = System.currentTimeMillis();
@@ -143,7 +142,7 @@ public class Ez10 implements VehicleInterface {
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
 		currentRoute = new ArrayList<>();
-		DirectionsRoute simpleRoute = busService.getRouteSimple(this.getLocationCoords(), locationCoords.toString());
+		DirectionsRoute simpleRoute = busService.getRouteSimple(this.getLocationCoords(), locationCoords);
 		for (DirectionsLeg leg : simpleRoute.legs) {
 			for (DirectionsStep step : leg.steps) {
 				currentRoute.add(step);
@@ -218,7 +217,7 @@ public class Ez10 implements VehicleInterface {
 	private void dropOffPassengersOnDemand() {
 		List<PassengerInterface> droppingPassengers = new ArrayList<>();
 		for (PassengerInterface passenger : passengersOnBoard) {
-			if (distanceUtils.getDistanceMeters(this.locationCoords.toString(),
+			if (distanceUtils.getDistanceMeters(this.locationCoords,
 					passenger.getDestinationCoords()) < 50) {
 				droppingPassengers.add(passenger);
 			}
@@ -249,7 +248,7 @@ public class Ez10 implements VehicleInterface {
 
 	private boolean getBooleanPassengerDestinationNearby(DirectionsStep currentStep) {
 		for (PassengerInterface passenger : passengersOnBoard) {
-			if (distanceUtils.getDistanceMeters(this.locationCoords.toString(),
+			if (distanceUtils.getDistanceMeters(this.getLocationCoords(),
 					passenger.getDestinationCoords()) < 50) {
 				return true;
 			}
@@ -283,7 +282,7 @@ public class Ez10 implements VehicleInterface {
 				boolean currentRouteNearDestination = false;
 				for (DirectionsStep step : currentRoute) {
 					if (distanceUtils.getDistanceMeters(passenger.getDestinationCoords(),
-							step.endLocation.toString()) < 50 || reservedSeats.contains(passenger)) {
+							step.endLocation) < 50 || reservedSeats.contains(passenger)) {
 						currentRouteNearDestination = true;
 						passangersNearbyBoolean = true;
 					}
@@ -313,7 +312,8 @@ public class Ez10 implements VehicleInterface {
 		keepDrivingCurrentRoute = driveOption;
 	}
 
-	private void visitClosestStationFuelUp() throws ApiException, InterruptedException, IOException {
+	@Override
+	public void visitClosestStationFuelUp() throws InterruptedException, ApiException, IOException {
 		Log.info("Needs to charge, moving to station, charging and returning.");
 		FleetManager fleetManagement = FleetManager.getInstance();
 		BusService busService = fleetManagement.getBusServices().get("Espoo");
@@ -339,9 +339,8 @@ public class Ez10 implements VehicleInterface {
 		}
 		Log.info("Fueled up and returned to origin");
 	}
-
-	@Override
-	public double fuelUp() throws InterruptedException {
+	
+	private double fuelUp() throws InterruptedException {
 		Thread.sleep(5000); // actual charging takes about 7 hours
 		this.range = 14 * 60 * 60 * maxSpeedMeters;
 		return this.range;
@@ -369,13 +368,13 @@ public class Ez10 implements VehicleInterface {
 		for (BusStopInterface stop : busStopService.getAllStops()) {
 			if (stop.getName() == stopType) {
 				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
-						currentStep.startLocation.toString()) < distance) {
+						currentStep.startLocation) < distance) {
 					closestStop = stop;
 					distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
 				}
 			} else if (stop.getName() == stopType) {
 				if (distanceUtils.getDistanceMeters(stop.getLocationCoords(),
-						currentStep.startLocation.toString()) < distance) {
+						currentStep.startLocation) < distance) {
 					closestStop = stop;
 					distance = distanceUtils.getDistanceMeters(stop.getLocationCoords(), this.getLocationCoords());
 				}
@@ -419,8 +418,8 @@ public class Ez10 implements VehicleInterface {
 	}
 
 	@Override
-	public String getLocationCoords() {
-		return locationCoords.toString();
+	public LatLng getLocationCoords() {
+		return locationCoords;
 	}
 
 	@Override
@@ -434,7 +433,7 @@ public class Ez10 implements VehicleInterface {
 	public boolean pickPassenger(PassengerInterface passenger) {
 		if ((!passengersOnBoard.contains(passenger)) && (getFreeSeats() > 0) || reservedSeats.contains(passenger)) {
 			passengersOnBoard.add(passenger);
-			passenger.setCurrentCoords("");
+			passenger.setCurrentCoords(null);
 			passenger.setStatus("on board");
 			Log.info("Picked passanger id: " + passenger.getId());
 			return true;
