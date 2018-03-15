@@ -1,7 +1,7 @@
 package entities;
 
 import com.google.maps.model.LatLng;
-
+import enums.PassengerStatus;
 import interfaces.*;
 import services.*;
 import utilities.*;
@@ -13,14 +13,14 @@ public class RegularPassenger implements PassengerInterface {
 	private String destination;
 	private LatLng originCoords;
 	private LatLng destinationCoords;
-	private String status;
+	private PassengerStatus status;
 	private LatLng currentCoords;
 
 	public RegularPassenger(int id, String origin, String destination, LatLng originCoords, LatLng destinationCoords) {
 		this.id = id;
 		this.origin = origin;
 		this.destination = destination;
-		this.status = "waiting";
+		this.status = PassengerStatus.waiting;
 		this.originCoords = originCoords; 
 		this.currentCoords = originCoords; 
 		this.destinationCoords = destinationCoords;
@@ -65,12 +65,12 @@ public class RegularPassenger implements PassengerInterface {
 	}
 
 	@Override
-	public void setStatus(String newStatus) {
+	public void setStatus(PassengerStatus newStatus) {
 		this.status = newStatus;
 	}
 	
 	@Override
-	public String getStatus() {
+	public PassengerStatus getStatus() {
 		return status;
 	}
 }

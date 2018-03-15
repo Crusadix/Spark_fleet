@@ -10,7 +10,8 @@ import java.util.Map.Entry;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsStep;
-import com.google.maps.model.LatLng;
+import enums.BusStatus;
+import enums.PassengerStatus;
 import factories.*;
 import interfaces.*;
 import services.*;
@@ -61,7 +62,7 @@ public class PassengerServiceImpl implements PassengerService {
 		List<PassengerInterface> orderedWaitingPassengersByDistance = new ArrayList<>();
 		List<PassengerInterface> passengersOnBoard = vehicle.getPassengersOnBoard();
 		for (PassengerInterface passenger : passengers) {
-			if (passenger.getStatus().equals("waiting")) {
+			if (passenger.getStatus().equals(PassengerStatus.waiting)) {
 				orderedWaitingPassengersByDistance.add(passenger);
 			}
 		}
@@ -81,7 +82,7 @@ public class PassengerServiceImpl implements PassengerService {
 					&& vehicle.getFreeSeats() > 0) {
 				vehicle.addToReservedSeats(orderedWaitingPassengersByDistance.get(waitingPassengersPointer));
 				waypointCoords[y] = orderedWaitingPassengersByDistance.get(waitingPassengersPointer).getCurrentCoords().toString();
-				orderedWaitingPassengersByDistance.get(waitingPassengersPointer).setStatus("bus on route");
+				orderedWaitingPassengersByDistance.get(waitingPassengersPointer).setStatus(PassengerStatus.busOnRoute);
 				waitingPassengersPointer++;
 			}
 		}

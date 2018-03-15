@@ -2,6 +2,8 @@ package interfaces;
 
 import com.google.maps.model.LatLng;
 
+import enums.PassengerStatus;
+
 public interface PassengerInterface {
 
 	/**
@@ -19,11 +21,11 @@ public interface PassengerInterface {
 	LatLng getDestinationCoords();
 
 	/**
-	 * Sets the status of the passenger to the specified String-value.
+	 * Sets the status of the passenger to the specified BusStatus-enum.
 	 * 
 	 * @param status specifies the status to be set for the passenger
 	 */
-	void setStatus(String status);
+	void setStatus(PassengerStatus status);
 
 	/**
 	 * Sets the currentCoords-variable of the passenger to the specified LatLng-object.
@@ -40,11 +42,11 @@ public interface PassengerInterface {
 	LatLng getCurrentCoords();
 
 	/**
-	 * Returns current status of the passenger as a String-variable. 
+	 * Returns current status of the passenger as a BusStatus-enum. 
 	 * 
-	 * @return returns the String-value representing the current status of the passenger.
+	 * @return returns the BusStatus-enum representing the current status of the passenger.
 	 */
-	String getStatus();
+	PassengerStatus getStatus();
 
 	/**
 	 * Returns a LatLng-object representing the origin of the passenger (the point where 

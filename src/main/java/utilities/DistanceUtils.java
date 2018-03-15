@@ -16,12 +16,6 @@ public class DistanceUtils {
 	}
 
 	public double getDistanceMeters(LatLng coordsA, LatLng coordsB) {
-		/*String[] partsA = coordsA.split(",");
-		String[] partsB = coordsB.split(",");
-		double latA = Double.parseDouble(partsA[0]);
-		double lonA = Double.parseDouble(partsA[1]);
-		double latB = Double.parseDouble(partsB[0]);
-		double lonB = Double.parseDouble(partsB[1]); */
 		double latA = coordsA.lat;
 		double lonA = coordsA.lng;
 		double latB = coordsB.lat;

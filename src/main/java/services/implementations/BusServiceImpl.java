@@ -11,7 +11,6 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.LatLng;
-
 import factories.*;
 import interfaces.*;
 import services.*;
